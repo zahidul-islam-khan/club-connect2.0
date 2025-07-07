@@ -7,6 +7,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  STUDENT
+  CLUB_LEADER
+  ADMIN
+}
+
+enum ClubStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum EventStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum MembershipStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum BudgetRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -20,9 +52,11 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@map("accounts")
 }
 
 model Session {
@@ -31,29 +65,30 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
 }
 
 model User {
-  id             String          @id @default(cuid())
-  name           String?
-  email          String          @unique
-  emailVerified  DateTime?
-  image          String?
-  password       String?
-  role           String          @default("STUDENT")
-  studentId      String?         @unique
-  department     String?
-  semester       String?
-  phone          String?
-  bio            String?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  accounts       Account[]
-  sessions       Session[]
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          UserRole  @default(STUDENT)
+  studentId     String?   @unique
+  department    String?
+  semester      String?
+  phone         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  memberships   Membership[]
+  eventRsvps    EventRsvp[]
   budgetRequests BudgetRequest[]
-  clubsLed       Club[]          @relation("ClubLeader")
-  eventRsvps     EventRsvp[]
-  memberships    Membership[]
 
   @@map("users")
 }
@@ -64,65 +99,62 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+  @@map("verificationtokens")
 }
 
 model Club {
-  id             String          @id @default(cuid())
-  name           String          @unique
-  description    String?
-  logo           String?
-  email          String?         @unique
-  website        String?
-  phone          String?
-  department     String?
-  status         String          @default("PENDING")
-  foundedYear    Int?
-  vision         String?
-  mission        String?
-  activities     String
-  leaderId       String
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  budgetRequests BudgetRequest[]
-  leader         User            @relation("ClubLeader", fields: [leaderId], references: [id])
-  events         Event[]
+  id          String      @id @default(cuid())
+  name        String      @unique
+  description String?
+  category    String?
+  status      ClubStatus  @default(ACTIVE)
+  logoUrl     String?
+  website     String?
+  email       String?
+  phone       String?
+  advisor     String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
   memberships    Membership[]
+  events         Event[]
+  budgetRequests BudgetRequest[]
 
   @@map("clubs")
 }
 
 model Membership {
-  id        String    @id @default(cuid())
+  id        String           @id @default(cuid())
   userId    String
   clubId    String
-  status    String    @default("PENDING")
-  role      String?   @default("Member")
+  status    MembershipStatus @default(PENDING)
+  role      String?          @default("Member")
   joinedAt  DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  club      Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
 
   @@unique([userId, clubId])
   @@map("memberships")
 }
 
 model Event {
-  id           String      @id @default(cuid())
-  title        String
-  description  String?
-  venue        String
-  startDate    DateTime
-  endDate      DateTime
-  capacity     Int?
-  isPublic     Boolean     @default(true)
-  status       String      @default("PENDING")
-  requirements String?
-  clubId       String
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  rsvps        EventRsvp[]
-  club         Club        @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  date        DateTime
+  location    String?
+  capacity    Int?
+  price       Float?
+  status      EventStatus @default(PENDING)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  clubId      String
+
+  club  Club        @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  rsvps EventRsvp[]
 
   @@map("events")
 }
@@ -134,30 +166,28 @@ model EventRsvp {
   status    String   @default("ATTENDING")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   @@unique([userId, eventId])
   @@map("event_rsvps")
 }
 
 model BudgetRequest {
-  id          String    @id @default(cuid())
+  id          String              @id @default(cuid())
   title       String
   description String?
   amount      Float
-  purpose     String
-  status      String    @default("PENDING")
-  clubId      String
+  status      BudgetRequestStatus @default(PENDING)
   requestedBy String
   reviewedBy  String?
-  reviewNotes String?
-  requestedAt DateTime  @default(now())
-  reviewedAt  DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  requester   User      @relation(fields: [requestedBy], references: [id])
-  club        Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  clubId      String
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  user User @relation(fields: [requestedBy], references: [id])
+  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
 
   @@map("budget_requests")
 }
@@ -166,8 +196,8 @@ model Notification {
   id         String   @id @default(cuid())
   title      String
   message    String
-  type       String
-  recipients String
+  type       String   // EMAIL, SYSTEM, ANNOUNCEMENT
+  recipients String   // JSON string of User IDs or "ALL" for PostgreSQL compatibility
   sentAt     DateTime @default(now())
   createdAt  DateTime @default(now())
 
