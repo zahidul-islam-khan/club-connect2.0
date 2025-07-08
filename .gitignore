@@ -59,6 +59,10 @@ check-*.js
 create-*.js
 role-*.js
 
+# Production setup scripts (keep these)
+# setup-production-db.js
+# deploy-production.js
+
 # Uploads (use external storage in production)
 public/uploads/avatars/*
 !public/uploads/avatars/.gitkeep
