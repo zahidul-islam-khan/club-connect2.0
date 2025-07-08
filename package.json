@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "npx prisma db push && next build",
+    "build": "prisma generate && next build",
+    "build:with-db": "prisma generate && prisma db push && next build",
     "start": "next start",
     "lint": "next lint",
     "db:generate": "prisma generate",
@@ -14,8 +15,7 @@
     "db:seed-bracu": "tsx prisma/seed-bracu-clubs.ts",
     "db:seed-simple": "node prisma/seed-simple.js",
     "db:seed-sqlite": "tsx prisma/seed-sqlite.ts",
-    "postinstall": "prisma generate",
-    "vercel-build": "prisma generate && prisma migrate deploy && next build"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",
