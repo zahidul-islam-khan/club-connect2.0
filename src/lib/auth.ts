@@ -46,6 +46,10 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.name,
           role: user.role,
+          studentId: user.studentId,
+          department: user.department,
+          semester: user.semester,
+          phone: user.phone,
         }
       },
     }),
@@ -53,14 +57,23 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        token.id = user.id
         token.role = user.role
+        token.studentId = user.studentId
+        token.department = user.department
+        token.semester = user.semester
+        token.phone = user.phone
       }
       return token
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id = token.sub!
+        session.user.id = token.id
         session.user.role = token.role
+        session.user.studentId = token.studentId
+        session.user.department = token.department
+        session.user.semester = token.semester
+        session.user.phone = token.phone
       }
       return session
     },
@@ -73,17 +86,30 @@ export const authOptions: NextAuthOptions = {
 declare module 'next-auth' {
   interface User {
     role: string
+    studentId?: string | null
+    department?: string | null
+    semester?: string | null
+    phone?: string | null
   }
   interface Session {
     user: User & {
       id: string
       role: string
+      studentId?: string | null
+      department?: string | null
+      semester?: string | null
+      phone?: string | null
     }
   }
 }
 
 declare module 'next-auth/jwt' {
   interface JWT {
+    id: string
     role: string
+    studentId?: string | null
+    department?: string | null
+    semester?: string | null
+    phone?: string | null
   }
 }
