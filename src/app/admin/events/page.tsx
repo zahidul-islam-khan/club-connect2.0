@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Calendar, MapPin, Users, Search, Edit, Trash2, Clock } from 'lucide-react'
+import { Calendar, MapPin, Users, Search, Edit, Clock } from 'lucide-react'
 
 interface Event {
   id: string

@@ -8,7 +8,6 @@ import { Badge } from '@/components/ui/badge'
 import { DollarSign, TrendingUp, Clock, CheckCircle, XCircle, Building2 } from 'lucide-react'
 
 export default function AdminBudgetPage() {
-  const { data: session } = useSession()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

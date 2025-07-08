@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Users, Search, UserCheck, UserX, Clock, Filter, MoreHorizontal, CheckCircle, XCircle, Trash2 } from 'lucide-react'
+import { Users, Search, UserCheck, UserX, Clock, CheckCircle, XCircle, Trash2 } from 'lucide-react'
 
 interface User {
   id: string
@@ -72,7 +72,7 @@ export default function AdminMembershipsPage() {
 
   useEffect(() => {
     fetchMemberships()
-  }, [statusFilter, clubFilter, searchTerm])
+  }, [statusFilter, clubFilter, searchTerm, fetchMemberships])
 
   const handleMembershipAction = async (membershipId: string, action: 'approve' | 'reject' | 'remove') => {
     if (processingId) return
