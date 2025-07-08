@@ -18,9 +18,9 @@ const updateClubSchema = z.object({
 // PUT - Update club
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
-  const { id } = await params
+  const { id } = params
 
   try {
     const session = await getServerSession(authOptions)
@@ -115,9 +115,9 @@ export async function PUT(
 // DELETE - Delete club
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
-  const { id } = await params
+  const { id } = params
 
   try {
     const session = await getServerSession(authOptions)
