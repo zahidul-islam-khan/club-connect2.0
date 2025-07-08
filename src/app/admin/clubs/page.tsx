@@ -107,94 +107,69 @@ export default function AdminClubsPage() {
     })
   }
 
-  const handleSaveEdit = async () => {
+  const handleUpdateClub = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     if (!editingClub) return
 
     setIsSubmitting(true)
-    try {
-      const updateData = {
-        name: editForm.name,
-        description: editForm.description,
-        department: editForm.department,
-        status: editForm.status,
-        foundedYear: parseInt(editForm.foundedYear) || null,
-        vision: editForm.vision,
-        mission: editForm.mission
-      }
-      
-      console.log('Sending update data:', updateData) // Debug log
-      
-      const response = await fetch(`/api/admin/clubs/${editingClub.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updateData),
-      })
 
-      if (response.ok) {
-        const updatedClub = await response.json()
-        
-        // Update the clubs list
-        setClubs(prevClubs =>
-          prevClubs.map(club =>
-            club.id === editingClub.id
-              ? { ...club, ...updatedClub }
-              : club
-          )
-        )
-        
-        setFilteredClubs(prevClubs =>
-          prevClubs.map(club =>
-            club.id === editingClub.id
-              ? { ...club, ...updatedClub }
-              : club
-          )
-        )
-        
-        handleCloseEdit()
-        alert('Club updated successfully!')
-      } else {
-        const errorData = await response.json()
-        console.error('Update error:', errorData)
-        
-        if (errorData.details && Array.isArray(errorData.details)) {
-          const validationErrors = errorData.details.map((err: { path?: string[]; message: string }) => `${err.path?.join('.')}: ${err.message}`).join('\n')
-          alert(`Validation errors:\n${validationErrors}`)
-        } else {
-          alert(errorData.error || 'Failed to update club')
-        }
-      }
-    } catch (error) {
-      console.error('Error updating club:', error)
-      alert('An error occurred while updating the club')
-    } finally {
-      setIsSubmitting(false)
+    // Basic validation
+    if (!editForm.name || !editForm.department || !editForm.status) {
+        alert('Please fill in all required fields.')
+        setIsSubmitting(false)
+        return
     }
-  }
+
+    try {
+        const response = await fetch(`/api/admin/clubs/${editingClub.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ...editForm,
+                foundedYear: editForm.foundedYear ? parseInt(editForm.foundedYear, 10) : null
+            })
+        })
+
+        if (!response.ok) {
+            const errorData = await response.json()
+            throw new Error(errorData.error || 'Failed to update club')
+        }
+
+        const updatedClub = await response.json()
+
+        setClubs(prevClubs =>
+            prevClubs.map(c => (c.id === updatedClub.id ? { ...c, ...updatedClub } : c))
+        )
+        setEditingClub(null)
+    } catch (error) {
+        console.error('Error updating club:', error)
+        alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    } finally {
+        setIsSubmitting(false)
+    }
+}
 
   const handleDeleteClub = async (clubId: string, clubName: string) => {
-    if (!confirm(`Are you sure you want to delete "${clubName}"? This action cannot be undone.`)) {
+    if (!window.confirm(`Are you sure you want to delete the club "${clubName}"? This action cannot be undone.`)) {
       return
     }
 
     try {
       const response = await fetch(`/api/admin/clubs/${clubId}`, {
-        method: 'DELETE',
+        method: 'DELETE'
       })
 
-      if (response.ok) {
-        // Remove the club from the lists
-        setClubs(prevClubs => prevClubs.filter(club => club.id !== clubId))
-        setFilteredClubs(prevClubs => prevClubs.filter(club => club.id !== clubId))
-        alert('Club deleted successfully!')
-      } else {
+      if (!response.ok) {
         const errorData = await response.json()
-        alert(errorData.error || 'Failed to delete club')
+        throw new Error(errorData.error || 'Failed to delete club')
       }
+
+      setClubs(prevClubs => prevClubs.filter(c => c.id !== clubId))
     } catch (error) {
       console.error('Error deleting club:', error)
-      alert('An error occurred while deleting the club')
+      alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
@@ -379,127 +354,134 @@ export default function AdminClubsPage() {
         {editingClub && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-semibold">Edit Club</h2>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleCloseEdit}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="edit-name">Club Name</Label>
-                    <Input
-                      id="edit-name"
-                      value={editForm.name}
-                      onChange={(e) => setEditForm(prev => ({ ...prev, name: e.target.value }))}
-                      placeholder="Enter club name"
-                    />
+              <form onSubmit={handleUpdateClub}>
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-semibold">Edit Club</h2>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleCloseEdit}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
                   </div>
 
-                  <div>
-                    <Label htmlFor="edit-description">Description</Label>
-                    <textarea
-                      id="edit-description"
-                      value={editForm.description}
-                      onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
-                      placeholder="Enter club description"
-                      className="w-full p-2 border border-gray-300 rounded-md resize-none"
-                      rows={4}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-4">
                     <div>
-                      <Label htmlFor="edit-department">Department/Category</Label>
-                      <select
-                        id="edit-department"
-                        value={editForm.department}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, department: e.target.value }))}
-                        className="w-full p-2 border border-gray-300 rounded-md"
-                      >
-                        <option value="">Select category</option>
-                        <option value="Academic">Academic</option>
-                        <option value="Extra-Curricular">Extra-Curricular</option>
-                        <option value="Sports">Sports</option>
-                      </select>
+                      <Label htmlFor="edit-name">Club Name</Label>
+                      <Input
+                        id="edit-name"
+                        value={editForm.name}
+                        onChange={(e) => setEditForm(prev => ({ ...prev, name: e.target.value }))}
+                        placeholder="Enter club name"
+                        required
+                      />
                     </div>
 
                     <div>
-                      <Label htmlFor="edit-status">Status</Label>
-                      <select
-                        id="edit-status"
-                        value={editForm.status}
-                        onChange={(e) => setEditForm(prev => ({ ...prev, status: e.target.value }))}
-                        className="w-full p-2 border border-gray-300 rounded-md"
-                      >
-                        <option value="PENDING">Pending</option>
-                        <option value="ACTIVE">Active</option>
-                        <option value="INACTIVE">Inactive</option>
-                        <option value="SUSPENDED">Suspended</option>
-                      </select>
+                      <Label htmlFor="edit-description">Description</Label>
+                      <textarea
+                        id="edit-description"
+                        value={editForm.description}
+                        onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
+                        placeholder="Enter club description"
+                        className="w-full p-2 border border-gray-300 rounded-md resize-none"
+                        rows={4}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="edit-department">Department/Category</Label>
+                        <select
+                          id="edit-department"
+                          value={editForm.department}
+                          onChange={(e) => setEditForm(prev => ({ ...prev, department: e.target.value }))}
+                          className="w-full p-2 border border-gray-300 rounded-md"
+                          required
+                        >
+                          <option value="">Select category</option>
+                          <option value="Academic">Academic</option>
+                          <option value="Extra-Curricular">Extra-Curricular</option>
+                          <option value="Sports">Sports</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="edit-status">Status</Label>
+                        <select
+                          id="edit-status"
+                          value={editForm.status}
+                          onChange={(e) => setEditForm(prev => ({ ...prev, status: e.target.value }))}
+                          className="w-full p-2 border border-gray-300 rounded-md"
+                          required
+                        >
+                          <option value="PENDING">Pending</option>
+                          <option value="ACTIVE">Active</option>
+                          <option value="INACTIVE">Inactive</option>
+                          <option value="SUSPENDED">Suspended</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="edit-foundedYear">Founded Year</Label>
+                      <Input
+                        id="edit-foundedYear"
+                        type="number"
+                        min="1900"
+                        max={new Date().getFullYear()}
+                        value={editForm.foundedYear}
+                        onChange={(e) => setEditForm(prev => ({ ...prev, foundedYear: e.target.value }))}
+                        placeholder="Enter founded year"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="edit-vision">Vision</Label>
+                      <textarea
+                        id="edit-vision"
+                        value={editForm.vision}
+                        onChange={(e) => setEditForm(prev => ({ ...prev, vision: e.target.value }))}
+                        placeholder="Enter club vision"
+                        className="w-full p-2 border border-gray-300 rounded-md resize-none"
+                        rows={3}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="edit-mission">Mission</Label>
+                      <textarea
+                        id="edit-mission"
+                        value={editForm.mission}
+                        onChange={(e) => setEditForm(prev => ({ ...prev, mission: e.target.value }))}
+                        placeholder="Enter club mission"
+                        className="w-full p-2 border border-gray-300 rounded-md resize-none"
+                        rows={3}
+                      />
                     </div>
                   </div>
 
-                  <div>
-                    <Label htmlFor="edit-foundedYear">Founded Year</Label>
-                    <Input
-                      id="edit-foundedYear"
-                      type="number"
-                      min="1900"
-                      max={new Date().getFullYear()}
-                      value={editForm.foundedYear}
-                      onChange={(e) => setEditForm(prev => ({ ...prev, foundedYear: e.target.value }))}
-                      placeholder="Enter founded year"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="edit-vision">Vision</Label>
-                    <textarea
-                      id="edit-vision"
-                      value={editForm.vision}
-                      onChange={(e) => setEditForm(prev => ({ ...prev, vision: e.target.value }))}
-                      placeholder="Enter club vision"
-                      className="w-full p-2 border border-gray-300 rounded-md resize-none"
-                      rows={3}
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="edit-mission">Mission</Label>
-                    <textarea
-                      id="edit-mission"
-                      value={editForm.mission}
-                      onChange={(e) => setEditForm(prev => ({ ...prev, mission: e.target.value }))}
-                      placeholder="Enter club mission"
-                      className="w-full p-2 border border-gray-300 rounded-md resize-none"
-                      rows={3}
-                    />
+                  <div className="flex items-center justify-end gap-3 mt-6 pt-4 border-t">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleCloseEdit}
+                      disabled={isSubmitting}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting || !editForm.name.trim() || !editForm.department}
+                    >
+                      {isSubmitting ? 'Saving...' : 'Save Changes'}
+                    </Button>
                   </div>
                 </div>
-
-                <div className="flex items-center justify-end gap-3 mt-6 pt-4 border-t">
-                  <Button
-                    variant="outline"
-                    onClick={handleCloseEdit}
-                    disabled={isSubmitting}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={handleSaveEdit}
-                    disabled={isSubmitting || !editForm.name.trim() || !editForm.department}
-                  >
-                    {isSubmitting ? 'Saving...' : 'Save Changes'}
-                  </Button>
-                </div>
-              </div>
+              </form>
             </div>
           </div>
         )}
