@@ -25,7 +25,7 @@ const bracuClubs = [
   { name: 'BRAC University Robotics Club', category: 'Technology', department: 'CSE/EEE', description: 'A place for students to design, build, and program robots for competitions and projects.', status: 'ACTIVE', vision: 'To be at the forefront of robotics.', mission: 'To inspire innovation in robotics.', activities: 'Robotics Competitions, Workshops, Project Showcases' },
   { name: 'BRAC University Natural Sciences Club', category: 'Academic', department: 'MNS', description: 'Fosters interest in the natural sciences through talks, field trips, and experiments.', status: 'ACTIVE', vision: 'To explore the wonders of science.', mission: 'To promote scientific inquiry.', activities: 'Science Fairs, Field Trips, Lab Visits' },
   { name: 'BRAC University English Literary Club', category: 'Arts & Culture', department: 'ENH', description: 'A society for lovers of English literature to discuss books, poetry, and creative writing.', status: 'ACTIVE', vision: 'To celebrate the power of literature.', mission: 'To foster a love for reading and writing.', activities: 'Book Clubs, Poetry Slams, Creative Writing Workshops' }
-];
+] as const; // Add 'as const' to infer literal types
 
 
 export async function GET() {
