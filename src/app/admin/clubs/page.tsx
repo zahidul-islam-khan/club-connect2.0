@@ -162,7 +162,7 @@ export default function AdminClubsPage() {
       })
 
       if (!response.ok) {
-        const errorData = await response.json()
+        const errorData: { error: string } = await response.json()
         throw new Error(errorData.error || 'Failed to delete club')
       }
 
