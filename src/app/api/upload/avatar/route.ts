@@ -32,6 +32,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File too large. Maximum size is 5MB.' }, { status: 400 })
     }
 
+    // Check if we're in production (Vercel)
+    const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL
+
+    if (isProduction) {
+      // In production, we can't save files to filesystem
+      // Return a placeholder or suggest using external storage
+      console.log('Production environment: File upload attempted but not supported')
+      return NextResponse.json({ 
+        error: 'File uploads are not supported in production. Please use external storage like Cloudinary or AWS S3.',
+        imageUrl: '/placeholder-avatar.png' // Fallback image
+      }, { status: 400 })
+    }
+
+    // Development environment - save to local filesystem
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
@@ -55,6 +69,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ imageUrl })
   } catch (error) {
     console.error('Error uploading file:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 })
   }
 }

@@ -93,13 +93,19 @@ export default function ProfilePage() {
         body: uploadFormData
       })
 
+      const data = await response.json()
+      
       if (response.ok) {
-        const data = await response.json()
         return data.imageUrl
       } else {
-        const error = await response.json()
-        toast.error(error.error || 'Failed to upload image')
-        return null
+        // Handle production limitation gracefully
+        if (data.error?.includes('not supported in production')) {
+          toast.error('Profile image uploads are not available in production demo. Feature works in development.')
+          return data.imageUrl // Use placeholder if provided
+        } else {
+          toast.error(data.error || 'Failed to upload image')
+          return null
+        }
       }
     } catch (error) {
       console.error('Error uploading file:', error)
