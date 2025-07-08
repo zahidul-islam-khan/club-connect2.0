@@ -133,12 +133,7 @@ export default async function StatusPage() {
             <div className="bg-white border rounded-lg p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">📋 Recent Membership Applications</h2>
               <div className="space-y-3">
-                {recentMemberships.map((membership: { 
-                  id: string; 
-                  user: { name: string | null; studentId: string | null; }; 
-                  club: { name: string; }; 
-                  createdAt: Date; 
-                }) => (
+                {recentMemberships.map((membership) => (
                   <div key={membership.id} className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
                     <div>
                       <p className="font-medium text-gray-900">
