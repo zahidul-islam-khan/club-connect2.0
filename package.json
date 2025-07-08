@@ -16,6 +16,7 @@
     "db:seed-bracu": "tsx prisma/seed-bracu-clubs.ts",
     "db:seed-simple": "node prisma/seed-simple.js",
     "db:seed-sqlite": "tsx prisma/seed-sqlite.ts",
+    "db:setup-production": "node setup-production-db.js",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -58,5 +59,8 @@
     "ts-node": "^10.9.2",
     "tsx": "^4.20.3",
     "typescript": "^5"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }
