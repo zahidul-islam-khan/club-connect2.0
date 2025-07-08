@@ -20,12 +20,13 @@ const updateClubSchema = z.object({
 // PUT - Update club
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
+  const { id } = context.params
+
   try {
     const session = await getServerSession(authOptions)
-    
-    // Check if user is authenticated and is an admin
+
     if (!session?.user || session.user.role !== 'ADMIN') {
       return NextResponse.json(
         { error: 'Unauthorized. Admin access required.' },
@@ -34,16 +35,14 @@ export async function PUT(
     }
 
     const body = await request.json()
-    console.log('Received body:', body) // Debug log
-    
-    // Validate the input data
+    console.log('Received body:', body)
+
     const validatedData = updateClubSchema.parse(body)
-    
-    // Check if club exists
+
     const existingClub = await db.club.findUnique({
-      where: { id: params.id }
+      where: { id }
     })
-    
+
     if (!existingClub) {
       return NextResponse.json(
         { error: 'Club not found' },
@@ -51,9 +50,8 @@ export async function PUT(
       )
     }
 
-    // Update the club
     const updatedClub = await db.club.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         name: validatedData.name,
         description: validatedData.description,
@@ -84,7 +82,6 @@ export async function PUT(
       }
     })
 
-    // Format the response to match the expected Club interface
     const formattedClub = {
       id: updatedClub.id,
       name: updatedClub.name,
@@ -102,14 +99,14 @@ export async function PUT(
     return NextResponse.json(formattedClub)
   } catch (error) {
     console.error('Error updating club:', error)
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid input data', details: error.errors },
         { status: 400 }
       )
     }
-    
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -120,12 +117,13 @@ export async function PUT(
 // DELETE - Delete club
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
+  const { id } = context.params
+
   try {
     const session = await getServerSession(authOptions)
-    
-    // Check if user is authenticated and is an admin
+
     if (!session?.user || session.user.role !== 'ADMIN') {
       return NextResponse.json(
         { error: 'Unauthorized. Admin access required.' },
@@ -133,9 +131,8 @@ export async function DELETE(
       )
     }
 
-    // Check if club exists
     const existingClub = await db.club.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         _count: {
           select: {
@@ -145,7 +142,7 @@ export async function DELETE(
         }
       }
     })
-    
+
     if (!existingClub) {
       return NextResponse.json(
         { error: 'Club not found' },
@@ -153,28 +150,27 @@ export async function DELETE(
       )
     }
 
-    // Check if club has memberships or events
     if (existingClub._count.memberships > 0 || existingClub._count.events > 0) {
       return NextResponse.json(
-        { 
-          error: 'Cannot delete club with existing memberships or events. Please remove all memberships and events first.' 
+        {
+          error: 'Cannot delete club with existing memberships or events. Please remove all memberships and events first.'
         },
         { status: 400 }
       )
     }
 
-    // Delete the club
     await db.club.delete({
-      where: { id: params.id }
+      where: { id }
     })
 
     return NextResponse.json({ message: 'Club deleted successfully' })
   } catch (error) {
     console.error('Error deleting club:', error)
-    
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     )
   }
 }
+
