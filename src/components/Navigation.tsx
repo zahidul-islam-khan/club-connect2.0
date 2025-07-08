@@ -12,7 +12,8 @@ import {
   Home,
   Building2,
   Shield,
-  Clock
+  Clock,
+  User
 } from 'lucide-react'
 
 export default function Navigation() {
@@ -22,13 +23,16 @@ export default function Navigation() {
     { href: '/dashboard', label: 'Dashboard', icon: Home },
     { href: '/clubs', label: 'Discover Clubs', icon: Building2 },
     { href: '/events', label: 'Events', icon: Calendar },
+    { href: '/profile', label: 'Profile', icon: User },
   ]
 
   const clubLeaderLinks = [
     { href: '/dashboard', label: 'Dashboard', icon: Home },
     { href: '/club-leader/memberships', label: 'Applications', icon: Clock },
+    { href: '/club-leader/events', label: 'Manage Events', icon: Calendar },
     { href: '/clubs', label: 'Discover Clubs', icon: Building2 },
-    { href: '/events', label: 'Events', icon: Calendar },
+    { href: '/events', label: 'All Events', icon: Calendar },
+    { href: '/profile', label: 'Profile', icon: User },
   ]
 
   const adminLinks = [
@@ -37,6 +41,7 @@ export default function Navigation() {
     { href: '/admin/events', label: 'Events', icon: Calendar },
     { href: '/admin/memberships', label: 'Memberships', icon: Users },
     { href: '/admin/budget', label: 'Budget Requests', icon: Settings },
+    { href: '/profile', label: 'Profile', icon: User },
   ]
 
   const getNavLinks = () => {

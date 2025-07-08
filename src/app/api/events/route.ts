@@ -104,3 +104,125 @@ export async function GET(request: NextRequest) {
     )
   }
 }
+
+export async function POST(request: NextRequest) {
+  try {
+    console.log("POST /api/events: Creating new event");
+    
+    const session = await getServerSession(authOptions)
+    
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Get user data and verify they are a club leader
+    const user = await db.user.findUnique({
+      where: { email: session.user.email },
+      select: { 
+        id: true, 
+        role: true,
+        leadingClubs: {
+          select: { id: true, name: true }
+        }
+      }
+    })
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    }
+
+    if (user.role !== 'CLUB_LEADER' && user.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Only club leaders can create events' }, { status: 403 })
+    }
+
+    // Parse request data
+    const data = await request.json();
+    const { 
+      title, 
+      description, 
+      venue, 
+      startDate, 
+      endDate, 
+      capacity, 
+      isPublic = true,
+      requirements,
+      clubId 
+    } = data;
+
+    // Validate required fields
+    if (!title || !venue || !startDate || !endDate || !clubId) {
+      return NextResponse.json({ 
+        error: 'Missing required fields: title, venue, startDate, endDate, clubId' 
+      }, { status: 400 })
+    }
+
+    // Verify the user is the leader of the specified club
+    const isLeaderOfClub = user.leadingClubs.some(club => club.id === clubId);
+    if (!isLeaderOfClub && user.role !== 'ADMIN') {
+      return NextResponse.json({ 
+        error: 'You can only create events for clubs you lead' 
+      }, { status: 403 })
+    }
+
+    // Validate dates
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const now = new Date();
+
+    if (start < now) {
+      return NextResponse.json({ 
+        error: 'Event start date cannot be in the past' 
+      }, { status: 400 })
+    }
+
+    if (end <= start) {
+      return NextResponse.json({ 
+        error: 'Event end date must be after start date' 
+      }, { status: 400 })
+    }
+
+    // Create the event
+    const event = await db.event.create({
+      data: {
+        title,
+        description: description || null,
+        date: start, // Primary date field
+        venue: venue || null,
+        startDate: start,
+        endDate: end,
+        capacity: capacity ? parseInt(capacity.toString()) : null,
+        isPublic: Boolean(isPublic),
+        requirements: requirements || null,
+        status: 'PENDING', // Events need admin approval
+        clubId
+      },
+      include: {
+        club: {
+          select: { name: true }
+        }
+      }
+    });
+
+    console.log(`Event "${title}" created successfully for club ${event.club.name}`);
+
+    return NextResponse.json({ 
+      message: 'Event created successfully and submitted for approval',
+      event: {
+        id: event.id,
+        title: event.title,
+        venue: event.venue,
+        startDate: event.startDate?.toISOString(),
+        endDate: event.endDate?.toISOString(),
+        status: event.status,
+        clubName: event.club.name
+      }
+    });
+
+  } catch (error) {
+    console.error('Create event API error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}

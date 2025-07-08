@@ -73,7 +73,8 @@ export default function SignUpPage() {
       if (response.ok) {
         router.push('/auth/signin?message=Registration successful! Please sign in.')
       } else {
-        setError(data.error || 'An error occurred during registration')
+        console.error('Registration API error:', data)
+        setError(data.details ? `${data.error}: ${data.details}` : (data.error || 'An error occurred during registration'))
       }
     } catch (err) {
       console.error('Registration error:', err)

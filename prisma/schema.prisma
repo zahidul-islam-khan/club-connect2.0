@@ -3,41 +3,13 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
-  STUDENT
-  CLUB_LEADER
-  ADMIN
-}
-
-enum ClubStatus {
-  PENDING
-  ACTIVE
-  INACTIVE
-  SUSPENDED
-}
-
-enum EventStatus {
-  PENDING
-  APPROVED
-  REJECTED
-  CANCELLED
-}
-
-enum MembershipStatus {
-  PENDING
-  ACCEPTED
-  REJECTED
-}
-
-enum BudgetRequestStatus {
-  PENDING
-  APPROVED
-  REJECTED
-}
+// Using string enum pattern for SQLite compatibility
+// Instead of enum types, we'll use strings in the models
+// These are just reference tables, not actual models in our database
 
 model Account {
   id                String  @id @default(cuid())
@@ -76,7 +48,7 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?
-  role          UserRole  @default(STUDENT)
+  role          String    @default("STUDENT") // Using string instead of enum
   studentId     String?   @unique
   department    String?
   semester      String?
@@ -109,7 +81,7 @@ model Club {
   description String?
   category    String?
   department  String?
-  status      ClubStatus  @default(ACTIVE)
+  status      String      @default("ACTIVE") // Using string instead of enum
   logoUrl     String?
   website     String?
   email       String?
@@ -132,14 +104,14 @@ model Club {
 }
 
 model Membership {
-  id        String           @id @default(cuid())
+  id        String    @id @default(cuid())
   userId    String
   clubId    String
-  status    MembershipStatus @default(PENDING)
-  role      String?          @default("Member")
+  status    String    @default("PENDING") // Using string instead of enum
+  role      String?   @default("Member")
   joinedAt  DateTime?
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
@@ -161,7 +133,7 @@ model Event {
   price        Float?
   isPublic     Boolean?    @default(true)
   requirements String?
-  status       EventStatus @default(PENDING)
+  status       String      @default("PENDING") // Using string instead of enum
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
   clubId       String
@@ -188,12 +160,12 @@ model EventRsvp {
 }
 
 model BudgetRequest {
-  id          String              @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
   description String?
   amount      Float
   purpose     String?
-  status      BudgetRequestStatus @default(PENDING)
+  status      String    @default("PENDING") // Using string instead of enum
   requestedBy String
   reviewedBy  String?
   clubId      String

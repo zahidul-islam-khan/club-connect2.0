@@ -12,6 +12,8 @@
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
     "db:seed-bracu": "tsx prisma/seed-bracu-clubs.ts",
+    "db:seed-simple": "node prisma/seed-simple.js",
+    "db:seed-sqlite": "tsx prisma/seed-sqlite.ts",
     "postinstall": "prisma generate",
     "vercel-build": "prisma generate && prisma migrate deploy && next build"
   },
@@ -37,6 +39,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.60.0",
+    "react-hot-toast": "^2.5.2",
     "resend": "^4.6.0",
     "tailwind-merge": "^3.3.1",
     "zod": "^3.25.74"
@@ -51,6 +54,7 @@
     "eslint-config-next": "15.3.5",
     "prisma": "^6.11.1",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
     "tsx": "^4.20.3",
     "typescript": "^5"
   }

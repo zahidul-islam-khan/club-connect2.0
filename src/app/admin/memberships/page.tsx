@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -39,7 +40,8 @@ interface Stats {
 }
 
 export default function AdminMembershipsPage() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
+  const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [memberships, setMemberships] = useState<Membership[]>([])
   const [stats, setStats] = useState<Stats>({ total: 0, active: 0, pending: 0, rejected: 0 })
@@ -47,6 +49,15 @@ export default function AdminMembershipsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [clubFilter, setClubFilter] = useState('all')
+
+  // Redirect if not an admin
+  useEffect(() => {
+    if (status === 'loading') return
+    if (!session || session.user.role !== 'ADMIN') {
+      router.push('/dashboard')
+      return
+    }
+  }, [session, status, router])
   const [processingId, setProcessingId] = useState<string | null>(null)
 
   const fetchMemberships = async () => {

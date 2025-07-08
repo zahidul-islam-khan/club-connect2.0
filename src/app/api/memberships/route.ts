@@ -6,16 +6,25 @@ import { sendEmail, emailTemplates } from '@/lib/email'
 
 export async function POST(request: NextRequest) {
   try {
+    // Log the request for debugging
+    console.log("POST /api/memberships: Processing request");
+    
     const session = await getServerSession(authOptions)
     
     if (!session?.user?.email) {
+      console.log("POST /api/memberships: Unauthorized - No session");
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { clubId, action } = await request.json()
+    // Log authenticated user for debugging
+    console.log(`POST /api/memberships: Authenticated as ${session.user.email}`);
+    
+    const data = await request.json();
+    const { clubId, action = 'join' } = data;
 
-    if (!clubId || !action) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    if (!clubId) {
+      console.log("POST /api/memberships: Missing clubId");
+      return NextResponse.json({ error: 'Missing required clubId' }, { status: 400 })
     }
 
     // Get user data with more details
@@ -31,6 +40,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (!user) {
+      console.log("POST /api/memberships: User not found in database");
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
@@ -46,8 +56,10 @@ export async function POST(request: NextRequest) {
       })
 
       if (existingMembership) {
+        console.log(`POST /api/memberships: User already has membership with status ${existingMembership.status}`);
         return NextResponse.json({ 
-          error: 'Already applied or member of this club' 
+          error: 'Already applied or member of this club',
+          status: existingMembership.status
         }, { status: 400 })
       }
 
@@ -62,10 +74,12 @@ export async function POST(request: NextRequest) {
       })
 
       if (!club) {
+        console.log(`POST /api/memberships: Club with ID ${clubId} not found`);
         return NextResponse.json({ error: 'Club not found' }, { status: 404 })
       }
 
       // Create new membership application
+      console.log(`Creating new membership: User ${user.id} joining club ${clubId}`);
       const membership = await db.membership.create({
         data: {
           userId: user.id,
@@ -89,12 +103,14 @@ export async function POST(request: NextRequest) {
               user.department || 'N/A'
             )
           })
+          console.log(`Email notification sent to club leader: ${club.leader.email}`);
         }
       } catch (emailError) {
         console.error('Failed to send club leader notification:', emailError)
         // Don't fail the request if email fails
       }
 
+      console.log("Membership created successfully");
       return NextResponse.json({ 
         message: 'Application submitted successfully',
         membership 

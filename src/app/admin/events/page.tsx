@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -27,17 +28,37 @@ interface Event {
 }
 
 export default function AdminEventsPage() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
+  const router = useRouter()
   const [events, setEvents] = useState<Event[]>([])
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [loading, setLoading] = useState(true)
+  const [processingEventId, setProcessingEventId] = useState<string | null>(null)
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null)
+  const [editFormData, setEditFormData] = useState({
+    title: '',
+    description: '',
+    venue: '',
+    startDate: '',
+    endDate: '',
+    capacity: 0
+  })
+
+  // Redirect if not an admin
+  useEffect(() => {
+    if (status === 'loading') return
+    if (!session || session.user.role !== 'ADMIN') {
+      router.push('/dashboard')
+      return
+    }
+  }, [session, status, router])
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         setLoading(true)
-        const response = await fetch('/api/events')
+        const response = await fetch('/api/admin/events')
         
         if (!response.ok) {
           throw new Error('Failed to fetch events')
@@ -74,6 +95,116 @@ export default function AdminEventsPage() {
 
     setFilteredEvents(filtered)
   }, [searchTerm, events])
+
+  const handleEventAction = async (eventId: string, action: 'approve' | 'reject') => {
+    try {
+      setProcessingEventId(eventId)
+      
+      const response = await fetch(`/api/admin/events/${eventId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ action })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || `Failed to ${action} event`)
+      }
+
+      const result = await response.json()
+      
+      // Update the local state
+      setEvents(prevEvents => 
+        prevEvents.map(event => 
+          event.id === eventId 
+            ? { ...event, status: action === 'approve' ? 'APPROVED' : 'REJECTED' }
+            : event
+        )
+      )
+
+      console.log(`Event ${action}d successfully:`, result)
+      
+    } catch (error) {
+      console.error(`Error ${action}ing event:`, error)
+      alert(`Failed to ${action} event. Please try again.`)
+    } finally {
+      setProcessingEventId(null)
+    }
+  }
+
+  const handleEditEvent = (event: Event) => {
+    setEditingEvent(event)
+    setEditFormData({
+      title: event.title,
+      description: event.description || '',
+      venue: event.venue || '',
+      startDate: event.startDate ? new Date(event.startDate).toISOString().slice(0, 16) : '',
+      endDate: event.endDate ? new Date(event.endDate).toISOString().slice(0, 16) : '',
+      capacity: event.capacity || 0
+    })
+  }
+
+  const handleSaveEdit = async () => {
+    if (!editingEvent) return
+
+    try {
+      setProcessingEventId(editingEvent.id)
+      
+      const response = await fetch(`/api/admin/events/${editingEvent.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: editFormData.title,
+          description: editFormData.description,
+          venue: editFormData.venue,
+          startDate: new Date(editFormData.startDate).toISOString(),
+          endDate: new Date(editFormData.endDate).toISOString(),
+          capacity: parseInt(editFormData.capacity.toString())
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to update event')
+      }
+
+      const result = await response.json()
+      
+      // Update the local state
+      setEvents(prevEvents => 
+        prevEvents.map(event => 
+          event.id === editingEvent.id 
+            ? { ...event, ...editFormData, startDate: editFormData.startDate, endDate: editFormData.endDate }
+            : event
+        )
+      )
+
+      setEditingEvent(null)
+      console.log('Event updated successfully:', result)
+      
+    } catch (error) {
+      console.error('Error updating event:', error)
+      alert('Failed to update event. Please try again.')
+    } finally {
+      setProcessingEventId(null)
+    }
+  }
+
+  const handleCancelEdit = () => {
+    setEditingEvent(null)
+    setEditFormData({
+      title: '',
+      description: '',
+      venue: '',
+      startDate: '',
+      endDate: '',
+      capacity: 0
+    })
+  }
 
   if (loading) {
     return (
@@ -216,15 +347,30 @@ export default function AdminEventsPage() {
                     <div className="flex items-center gap-2">
                       {event.status === 'PENDING' && (
                         <>
-                          <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                            Approve
+                          <Button 
+                            size="sm" 
+                            className="bg-green-600 hover:bg-green-700"
+                            onClick={() => handleEventAction(event.id, 'approve')}
+                            disabled={processingEventId === event.id}
+                          >
+                            {processingEventId === event.id ? 'Processing...' : 'Approve'}
                           </Button>
-                          <Button variant="outline" size="sm" className="text-red-600">
-                            Reject
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="text-red-600"
+                            onClick={() => handleEventAction(event.id, 'reject')}
+                            disabled={processingEventId === event.id}
+                          >
+                            {processingEventId === event.id ? 'Processing...' : 'Reject'}
                           </Button>
                         </>
                       )}
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleEditEvent(event)}
+                      >
                         <Edit className="h-4 w-4 mr-1" />
                         Edit
                       </Button>
@@ -249,6 +395,104 @@ export default function AdminEventsPage() {
           </div>
         )}
       </div>
+
+      {/* Edit Event Modal */}
+      {editingEvent && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <h3 className="text-lg font-semibold mb-4">Edit Event</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Title *
+                </label>
+                <Input
+                  value={editFormData.title}
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, title: e.target.value }))}
+                  placeholder="Event title"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Description
+                </label>
+                <textarea
+                  className="w-full p-2 border border-gray-300 rounded-md resize-none"
+                  rows={3}
+                  value={editFormData.description}
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Event description"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Venue *
+                </label>
+                <Input
+                  value={editFormData.venue}
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, venue: e.target.value }))}
+                  placeholder="Event venue"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Start Date *
+                  </label>
+                  <Input
+                    type="datetime-local"
+                    value={editFormData.startDate}
+                    onChange={(e) => setEditFormData(prev => ({ ...prev, startDate: e.target.value }))}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    End Date *
+                  </label>
+                  <Input
+                    type="datetime-local"
+                    value={editFormData.endDate}
+                    onChange={(e) => setEditFormData(prev => ({ ...prev, endDate: e.target.value }))}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Capacity
+                </label>
+                <Input
+                  type="number"
+                  value={editFormData.capacity}
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, capacity: parseInt(e.target.value) || 0 }))}
+                  placeholder="Maximum attendees"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 mt-6">
+              <Button 
+                variant="outline" 
+                onClick={handleCancelEdit}
+                disabled={processingEventId === editingEvent.id}
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleSaveEdit}
+                disabled={processingEventId === editingEvent.id || !editFormData.title || !editFormData.venue}
+              >
+                {processingEventId === editingEvent.id ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

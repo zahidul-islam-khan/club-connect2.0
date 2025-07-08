@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -40,7 +41,8 @@ interface PendingMembership {
 }
 
 export default function ClubLeaderMembershipsPage() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
+  const router = useRouter()
   const [memberships, setMemberships] = useState<PendingMembership[]>([])
   const [filteredMemberships, setFilteredMemberships] = useState<PendingMembership[]>([])
   const [searchTerm, setSearchTerm] = useState('')
@@ -48,6 +50,15 @@ export default function ClubLeaderMembershipsPage() {
   const [selectedMemberships, setSelectedMemberships] = useState<Set<string>>(new Set())
   const [processing, setProcessing] = useState(false)
   const [notification, setNotification] = useState<{type: 'success' | 'error', message: string} | null>(null)
+
+  // Redirect if not a club leader or admin
+  useEffect(() => {
+    if (status === 'loading') return
+    if (!session || (session.user.role !== 'CLUB_LEADER' && session.user.role !== 'ADMIN')) {
+      router.push('/dashboard')
+      return
+    }
+  }, [session, status, router])
 
   useEffect(() => {
     const fetchPendingMemberships = async () => {

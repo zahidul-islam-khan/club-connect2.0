@@ -2,13 +2,209 @@
 'use client'
 
 import { useSession } from 'next-auth/react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
-import { Building2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { FormField, FileUpload, FormActions } from '@/components/ui/form-components'
+import { Edit, User, Check, X } from 'lucide-react'
+import { toast } from 'react-hot-toast'
+
+interface UserProfile {
+  id: string
+  name: string | null
+  email: string
+  role: string
+  studentId: string | null
+  department: string | null
+  semester: string | null
+  phone: string | null
+  image: string | null
+  createdAt: string
+  updatedAt: string
+}
 
 export default function ProfilePage() {
-  const { data: session, status } = useSession()
+  const { data: session, status, update } = useSession()
+  const [isEditing, setIsEditing] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [originalProfile, setOriginalProfile] = useState<UserProfile | null>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+
+  // Form state
+  const [formData, setFormData] = useState({
+    name: '',
+    studentId: '',
+    department: '',
+    semester: '',
+    phone: '',
+    image: ''
+  })
+
+  // Fetch profile data
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (session?.user?.email) {
+        try {
+          const response = await fetch('/api/profile')
+          if (response.ok) {
+            const data = await response.json()
+            setProfile(data)
+            setOriginalProfile(data)
+            setFormData({
+              name: data.name || '',
+              studentId: data.studentId || '',
+              department: data.department || '',
+              semester: data.semester || '',
+              phone: data.phone || '',
+              image: data.image || ''
+            })
+          }
+        } catch (error) {
+          console.error('Error fetching profile:', error)
+        }
+      }
+    }
+
+    fetchProfile()
+  }, [session])
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+  }
+
+  const handleFileChange = (file: File | null) => {
+    setSelectedFile(file)
+  }
+
+  const uploadFile = async (): Promise<string | null> => {
+    if (!selectedFile) return null
+
+    setIsUploading(true)
+    try {
+      const uploadFormData = new FormData()
+      uploadFormData.append('file', selectedFile)
+
+      const response = await fetch('/api/upload/avatar', {
+        method: 'POST',
+        body: uploadFormData
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        return data.imageUrl
+      } else {
+        const error = await response.json()
+        toast.error(error.error || 'Failed to upload image')
+        return null
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error)
+      toast.error('Failed to upload image')
+      return null
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  const handleSave = async () => {
+    setIsLoading(true)
+    try {
+      let imageUrl = formData.image
+
+      // Upload new image if selected
+      if (selectedFile) {
+        const uploadedUrl = await uploadFile()
+        if (uploadedUrl) {
+          imageUrl = uploadedUrl
+        } else {
+          setIsLoading(false)
+          return // Stop if upload failed
+        }
+      }
+
+      const updateData = {
+        name: formData.name,
+        studentId: formData.studentId || null,
+        department: formData.department || null,
+        semester: formData.semester || null,
+        phone: formData.phone || null,
+        image: imageUrl || null
+      }
+
+      const response = await fetch('/api/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData)
+      })
+
+      if (response.ok) {
+        const updatedProfile = await response.json()
+        setProfile(updatedProfile)
+        setOriginalProfile(updatedProfile)
+        setFormData({
+          name: updatedProfile.name || '',
+          studentId: updatedProfile.studentId || '',
+          department: updatedProfile.department || '',
+          semester: updatedProfile.semester || '',
+          phone: updatedProfile.phone || '',
+          image: updatedProfile.image || ''
+        })
+        setSelectedFile(null)
+        setIsEditing(false)
+        
+        // Update session if name or image changed
+        if (updatedProfile.name !== session?.user?.name || updatedProfile.image !== session?.user?.image) {
+          await update({
+            name: updatedProfile.name,
+            image: updatedProfile.image
+          })
+        }
+        
+        toast.success('Profile updated successfully!')
+      } else {
+        const error = await response.json()
+        toast.error(error.error || 'Failed to update profile')
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error)
+      toast.error('Failed to update profile')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleCancel = () => {
+    if (originalProfile) {
+      setFormData({
+        name: originalProfile.name || '',
+        studentId: originalProfile.studentId || '',
+        department: originalProfile.department || '',
+        semester: originalProfile.semester || '',
+        phone: originalProfile.phone || '',
+        image: originalProfile.image || ''
+      })
+    }
+    setSelectedFile(null)
+    setIsEditing(false)
+  }
+
+  const hasChanges = () => {
+    if (!originalProfile) return false
+    return (
+      formData.name !== (originalProfile.name || '') ||
+      formData.studentId !== (originalProfile.studentId || '') ||
+      formData.department !== (originalProfile.department || '') ||
+      formData.semester !== (originalProfile.semester || '') ||
+      formData.phone !== (originalProfile.phone || '') ||
+      selectedFile !== null
+    )
+  }
 
   if (status === 'loading') {
     return <div className="flex justify-center items-center h-screen">Loading...</div>
@@ -18,45 +214,136 @@ export default function ProfilePage() {
     return <div className="flex justify-center items-center h-screen">Access Denied. Please sign in.</div>
   }
 
-  const user = session?.user
+  if (!profile) {
+    return <div className="flex justify-center items-center h-screen">Loading profile...</div>
+  }
 
   return (
     <div className="container mx-auto p-4 md:p-8">
-        <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">User Profile</h1>
-            <p className="text-gray-600">Your personal and account details.</p>
-        </div>
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">User Profile</h1>
+        <p className="text-gray-600">Your personal and account details.</p>
+      </div>
+      
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
-          <div className="flex items-center space-x-4">
-            <Avatar className="h-20 w-20">
-              <AvatarImage src={user?.image ?? undefined} alt={user?.name ?? 'User'} />
-              <AvatarFallback>{user?.name?.charAt(0).toUpperCase()}</AvatarFallback>
-            </Avatar>
-            <div>
-              <CardTitle className="text-2xl">{user?.name}</CardTitle>
-              <p className="text-gray-500">{user?.email}</p>
-              <Badge className="mt-2">{user?.role}</Badge>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Avatar className="h-20 w-20">
+                <AvatarImage 
+                  src={selectedFile ? URL.createObjectURL(selectedFile) : (profile.image || undefined)} 
+                  alt={profile.name || 'User'} 
+                />
+                <AvatarFallback>
+                  <User className="h-8 w-8" />
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <CardTitle className="text-2xl">{profile.name}</CardTitle>
+                <p className="text-gray-500">{profile.email}</p>
+                <Badge className="mt-2">{profile.role}</Badge>
+              </div>
             </div>
+            
+            {!isEditing && (
+              <Button
+                onClick={() => setIsEditing(true)}
+                variant="outline"
+                size="sm"
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Profile
+              </Button>
+            )}
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
-            <div>
-                <h3 className="font-semibold">Student ID</h3>
-                <p>{user?.studentId || 'Not Provided'}</p>
+        
+        <CardContent className="space-y-6">
+          {isEditing ? (
+            <form onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
+              <div className="space-y-4">
+                <FormField
+                  id="name"
+                  label="Full Name"
+                  value={formData.name}
+                  onChange={(value) => handleInputChange('name', value)}
+                  required
+                  placeholder="Enter your full name"
+                />
+
+                <FileUpload
+                  id="avatar"
+                  label="Profile Picture"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  currentImage={profile.image}
+                />
+
+                <FormField
+                  id="studentId"
+                  label="Student ID"
+                  value={formData.studentId}
+                  onChange={(value) => handleInputChange('studentId', value)}
+                  placeholder="e.g., 20101234"
+                />
+
+                <FormField
+                  id="department"
+                  label="Department"
+                  value={formData.department}
+                  onChange={(value) => handleInputChange('department', value)}
+                  placeholder="e.g., Computer Science and Engineering"
+                />
+
+                <FormField
+                  id="semester"
+                  label="Semester"
+                  value={formData.semester}
+                  onChange={(value) => handleInputChange('semester', value)}
+                  placeholder="e.g., Fall 2024"
+                />
+
+                <FormField
+                  id="phone"
+                  label="Phone Number"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(value) => handleInputChange('phone', value)}
+                  placeholder="e.g., +880 1234567890"
+                />
+              </div>
+
+              <FormActions
+                onSave={handleSave}
+                onCancel={handleCancel}
+                isLoading={isLoading || isUploading}
+                hasChanges={hasChanges()}
+              />
+            </form>
+          ) : (
+            <div className="space-y-4">
+              <div>
+                <h3 className="font-semibold text-gray-700">Student ID</h3>
+                <p className="text-gray-900">{profile.studentId || 'Not Provided'}</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-700">Department</h3>
+                <p className="text-gray-900">{profile.department || 'Not Provided'}</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-700">Semester</h3>
+                <p className="text-gray-900">{profile.semester || 'Not Provided'}</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-700">Phone</h3>
+                <p className="text-gray-900">{profile.phone || 'Not Provided'}</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-700">Member Since</h3>
+                <p className="text-gray-900">{new Date(profile.createdAt).toLocaleDateString()}</p>
+              </div>
             </div>
-            <div>
-                <h3 className="font-semibold">Department</h3>
-                <p>{user?.department || 'Not Provided'}</p>
-            </div>
-            <div>
-                <h3 className="font-semibold">Semester</h3>
-                <p>{user?.semester || 'Not Provided'}</p>
-            </div>
-            <div>
-                <h3 className="font-semibold">Phone</h3>
-                <p>{user?.phone || 'Not Provided'}</p>
-            </div>
+          )}
         </CardContent>
       </Card>
     </div>

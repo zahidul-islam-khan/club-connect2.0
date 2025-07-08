@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -25,7 +26,8 @@ interface Club {
 }
 
 export default function AdminClubsPage() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
+  const router = useRouter()
   const [clubs, setClubs] = useState<Club[]>([])
   const [filteredClubs, setFilteredClubs] = useState<Club[]>([])
   const [searchTerm, setSearchTerm] = useState('')
@@ -41,6 +43,15 @@ export default function AdminClubsPage() {
     mission: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Redirect if not an admin
+  useEffect(() => {
+    if (status === 'loading') return
+    if (!session || session.user.role !== 'ADMIN') {
+      router.push('/dashboard')
+      return
+    }
+  }, [session, status, router])
 
   useEffect(() => {
     const fetchClubs = async () => {

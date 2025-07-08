@@ -9,65 +9,111 @@ import type { Club } from "@prisma/client";
 
 // Add a type for the club with membership status
 interface ClubWithMembership extends Club {
-  membershipStatus?: "PENDING" | "ACTIVE" | "INACTIVE" | "NONE";
+  membershipStatus?: string | null;
 }
 
 export default function DiscoverClubsPage() {
+  // Define types for API responses
+  interface ClubsApiResponse {
+    clubs: ClubWithMembership[];
+    count?: number;
+    message?: string;
+  }
+
   const [clubs, setClubs] = useState<ClubWithMembership[]>([]);
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [processingClubIds, setProcessingClubIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    // Only fetch clubs if the session is authenticated
-    if (status === "authenticated") {
-      const fetchClubs = async () => {
-        try {
-          setLoading(true);
-          // The fetch request will automatically include the user's session cookie
-          const res = await fetch("/api/clubs");
-          if (!res.ok) {
-            const errorData = await res.json();
-            throw new Error(errorData.error || "Failed to fetch clubs.");
+    async function fetchClubs() {
+      try {
+        setLoading(true);
+        
+        // Temporarily using the backup endpoint
+        console.log("Fetching clubs data from backup endpoint...");
+        const response = await fetch("/api/all-clubs", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            // Prevent caching to get fresh data
+            "Cache-Control": "no-cache, no-store"
           }
-          const data = await res.json();
-          setClubs(data);
-          setError(null);
-        } catch (err) {
-          if (err instanceof Error) {
-            setError(err.message);
-          } else {
-            setError("An unknown error occurred.");
-          }
-        } finally {
-          setLoading(false);
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("Error fetching clubs:", response.status, errorText);
+          throw new Error(`Failed to fetch clubs: ${response.status}`);
         }
-      };
-      fetchClubs();
-    } else if (status === "unauthenticated") {
-      // If the user is not logged in, don't try to load clubs.
-      setLoading(false);
-      setClubs([]); // Clear any existing clubs
+        
+        // Parse the response JSON
+        const data = await response.json();
+        console.log("API response:", data);
+        
+        // Check if data has clubs property
+        if (data && Array.isArray(data.clubs)) {
+          setClubs(data.clubs);
+        } else if (Array.isArray(data)) {
+          // Handle case where API returns array directly
+          setClubs(data);
+        } else {
+          console.error("Unexpected API response format:", data);
+          setError("Unexpected data format from API");
+          setClubs([]);
+        }
+      } catch (err) {
+        console.error("Error in fetchClubs:", err);
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unknown error occurred while fetching clubs");
+        }
+        setClubs([]);
+      } finally {
+        setLoading(false);
+      }
     }
-    // The dependency array is correct. The effect should re-run when the session status changes.
-  }, [status]);
+
+    fetchClubs();
+  }, []);
 
   const handleJoinClub = async (clubId: string) => {
+    // Clear any previous errors
+    setError(null);
+    
     if (status !== "authenticated") {
       setError("You must be signed in to join a club.");
       return;
     }
+    
+    // Add club ID to processing set to prevent multiple clicks
+    setProcessingClubIds(prev => new Set(prev).add(clubId));
+    
     try {
+      console.log("Sending join request for club ID:", clubId);
       const res = await fetch("/api/memberships", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ clubId }),
+        headers: { 
+          "Content-Type": "application/json",
+          // Prevent caching
+          "Cache-Control": "no-cache"
+        },
+        body: JSON.stringify({ 
+          clubId
+          // action: "join" is now the default in the API
+        }),
       });
 
+      const data = await res.json();
+      
       if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || "Failed to send join request.");
+        console.error("Join club error:", data);
+        throw new Error(data.error || "Failed to send join request.");
       }
+      
+      console.log("Join request successful:", data);
 
       // Update the UI to reflect the pending status
       setClubs((prevClubs) =>
@@ -77,60 +123,71 @@ export default function DiscoverClubsPage() {
             : club
         )
       );
+      
+      // Show success message
+      alert("Your club join request has been submitted successfully!");
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
         setError("An unknown error occurred while joining the club.");
       }
+    } finally {
+      // Remove club ID from processing set when done
+      setProcessingClubIds(prev => {
+        const updated = new Set(prev);
+        updated.delete(clubId);
+        return updated;
+      });
     }
   };
 
   if (status === "loading") {
-    return <div className="text-center">Loading session...</div>;
+    return <div className="text-center py-8">Loading session...</div>;
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">Discover Clubs</h1>
-      {status === "unauthenticated" && (
-        <div className="text-center p-4 border rounded-md bg-gray-50">
-          <p>Please sign in to view and join university clubs.</p>
-        </div>
-      )}
-      {loading && <div className="text-center">Loading clubs...</div>}
-      {error && <div className="text-center text-red-500 py-4">{error}</div>}
-      {status === "authenticated" && !loading && clubs.length === 0 && (
+      {loading && <div className="text-center py-4">Loading clubs...</div>}
+      {error && <div className="text-center text-red-500 py-4 bg-red-50 rounded-md mb-4 p-3">{error}</div>}
+      {!loading && clubs.length === 0 && (
         <p>
           No clubs found. This might be because the database hasn't been seeded
           yet.
         </p>
       )}
-      {status === "authenticated" && clubs.length > 0 && (
+      {clubs.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {clubs.map((club) => (
-            <Card key={club.id}>
+            <Card key={club.id} className="h-full flex flex-col">
               <CardHeader>
                 <CardTitle>{club.name}</CardTitle>
-                {club.department && (
-                  <Badge variant="secondary">{club.department}</Badge>
-                )}
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {club.category && (
+                    <Badge variant="outline">{club.category}</Badge>
+                  )}
+                  {club.department && (
+                    <Badge variant="secondary">{club.department}</Badge>
+                  )}
+                </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="flex-grow flex flex-col justify-between">
                 <p className="text-gray-600 mb-4 h-24 overflow-y-auto">
                   {club.description}
                 </p>
                 <Button
                   onClick={() => handleJoinClub(club.id)}
                   disabled={
-                    club.membershipStatus === "ACTIVE" ||
-                    club.membershipStatus === "PENDING"
+                    status !== "authenticated" ||
+                    processingClubIds.has(club.id)
                   }
+                  className="mt-4"
                 >
-                  {club.membershipStatus === "ACTIVE"
-                    ? "Already a Member"
-                    : club.membershipStatus === "PENDING"
-                    ? "Request Sent"
+                  {status !== "authenticated"
+                    ? "Sign in to Join"
+                    : processingClubIds.has(club.id)
+                    ? "Processing..."
                     : "Request to Join"}
                 </Button>
               </CardContent>

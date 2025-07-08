@@ -44,3 +44,21 @@ next-env.d.ts
 
 .vercel
 .env*.local
+
+# Database files
+*.db
+*.db-journal
+prisma/dev.db*
+
+# Test and development scripts
+test-*.js
+verify-*.js
+assign-*.js
+make-*.js
+check-*.js
+create-*.js
+role-*.js
+
+# Uploads (use external storage in production)
+public/uploads/avatars/*
+!public/uploads/avatars/.gitkeep
