@@ -5,9 +5,10 @@ import { db } from '@/lib/db'
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     const session = await getServerSession(authOptions)
     
     if (!session?.user?.email) {
@@ -34,7 +35,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Invalid action. Must be "approve" or "reject"' }, { status: 400 })
     }
 
-    const eventId = params.id
+    const eventId = id
 
     // Check if event exists
     const existingEvent = await db.event.findUnique({
@@ -86,9 +87,10 @@ export async function PATCH(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params
     const session = await getServerSession(authOptions)
     
     if (!session?.user?.email) {
@@ -118,7 +120,7 @@ export async function PUT(
       }, { status: 400 })
     }
 
-    const eventId = params.id
+    const eventId = id
 
     // Check if event exists
     const existingEvent = await db.event.findUnique({
