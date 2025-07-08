@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Building2, Users, Globe, Mail, Search, Calendar, UserPlus, CheckCircle, Filter, Phone } from 'lucide-react'
+import { Building2, Users, Globe, Mail, Search, Calendar, UserPlus, Filter } from 'lucide-react'
 
 interface Club {
   id: string

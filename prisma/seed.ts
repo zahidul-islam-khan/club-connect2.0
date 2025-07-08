@@ -114,6 +114,7 @@ async function main() {
     data: {
       title: 'Introduction to React.js Workshop',
       description: 'Learn the fundamentals of React.js and build your first component.',
+      date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
       venue: 'Room 501, Computer Lab',
       startDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
       endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000 + 3 * 60 * 60 * 1000), // 3 hours later

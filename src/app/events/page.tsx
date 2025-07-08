@@ -198,7 +198,7 @@ export default function EventsPage() {
                   <div className="flex flex-col items-end space-y-2">
                     {event.userRsvpStatus && (
                       <Badge variant="outline" className="text-xs">
-                        RSVP'd
+                        RSVP&apos;d
                       </Badge>
                     )}
                   </div>

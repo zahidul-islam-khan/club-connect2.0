@@ -13,7 +13,10 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url)
     const search = searchParams.get('search') || ''
-    const status = searchParams.get('status') || 'APPROVED'
+    const statusParam = searchParams.get('status') || 'APPROVED'
+    const status = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'].includes(statusParam)
+      ? statusParam as 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED'
+      : 'APPROVED' as const
     const timeFilter = searchParams.get('time') || 'upcoming'
 
     // Get user data
@@ -54,9 +57,9 @@ export async function GET(request: NextRequest) {
         ...timeCondition,
         ...(search && {
           OR: [
-            { title: { contains: search, mode: 'insensitive' } },
-            { description: { contains: search, mode: 'insensitive' } },
-            { venue: { contains: search, mode: 'insensitive' } }
+            { title: { contains: search } },
+            { description: { contains: search } },
+            { venue: { contains: search } }
           ]
         })
       },
@@ -64,7 +67,6 @@ export async function GET(request: NextRequest) {
         club: {
           select: { 
             name: true, 
-            logo: true,
             id: true
           }
         },

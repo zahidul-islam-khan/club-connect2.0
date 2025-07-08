@@ -14,7 +14,7 @@ interface NotificationProps {
   href?: string
   createdAt: string
   read: boolean
-  metadata?: any
+  metadata?: Record<string, unknown>
 }
 
 export default function NotificationBell() {

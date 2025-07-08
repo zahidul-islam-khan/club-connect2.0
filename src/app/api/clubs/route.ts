@@ -13,7 +13,10 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url)
     const search = searchParams.get('search') || ''
-    const status = searchParams.get('status') || 'ACTIVE'
+    const statusParam = searchParams.get('status') || 'ACTIVE'
+    const status = ['PENDING', 'ACTIVE', 'INACTIVE', 'SUSPENDED'].includes(statusParam) 
+      ? statusParam as 'PENDING' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED'
+      : 'ACTIVE' as const
 
     // Get user data
     const user = await db.user.findUnique({

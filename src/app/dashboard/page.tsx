@@ -264,7 +264,7 @@ function AdminDashboard({ dashboardData }: { dashboardData: DashboardData }) {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-semibold text-sm">Event approved</h3>
-                    <p className="text-xs text-gray-600">Computer Club's Programming Contest</p>
+                    <p className="text-xs text-gray-600">Computer Club&apos;s Programming Contest</p>
                   </div>
                   <span className="text-xs text-gray-500">5 hours ago</span>
                 </div>
@@ -483,7 +483,7 @@ function ClubLeaderDashboard({ dashboardData }: { dashboardData: DashboardData }
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle>My Clubs</CardTitle>
-                  <CardDescription>Clubs you're leading</CardDescription>
+                  <CardDescription>Clubs you&apos;re leading</CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -590,7 +590,7 @@ function StudentDashboard({ dashboardData }: { dashboardData: DashboardData }) {
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle>My Clubs</CardTitle>
-                  <CardDescription>Clubs you're currently a member of</CardDescription>
+                  <CardDescription>Clubs you&apos;re currently a member of</CardDescription>
                 </div>
                 <Link href="/clubs">
                   <Button variant="outline" size="sm">
@@ -629,7 +629,7 @@ function StudentDashboard({ dashboardData }: { dashboardData: DashboardData }) {
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle>Upcoming Events</CardTitle>
-                  <CardDescription>Events you've RSVP'd to</CardDescription>
+                  <CardDescription>Events you&apos;ve RSVP&apos;d to</CardDescription>
                 </div>
                 <Link href="/events">
                   <Button variant="outline" size="sm">

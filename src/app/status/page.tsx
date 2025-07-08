@@ -3,10 +3,9 @@ import Link from 'next/link'
 
 export default async function StatusPage() {
   // Get statistics
-  const [clubs, users, memberships, events] = await Promise.all([
+  const [clubs, users, events] = await Promise.all([
     db.club.count(),
     db.user.count(),
-    db.membership.count(),
     db.event.count(),
   ])
 
@@ -134,11 +133,16 @@ export default async function StatusPage() {
             <div className="bg-white border rounded-lg p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">📋 Recent Membership Applications</h2>
               <div className="space-y-3">
-                {recentMemberships.map((membership: any) => (
+                {recentMemberships.map((membership: { 
+                  id: string; 
+                  user: { name: string | null; studentId: string | null; }; 
+                  club: { name: string; }; 
+                  createdAt: Date; 
+                }) => (
                   <div key={membership.id} className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
                     <div>
                       <p className="font-medium text-gray-900">
-                        {membership.user.name} ({membership.user.studentId})
+                        {membership.user.name || 'Unknown'} ({membership.user.studentId || 'No ID'})
                       </p>
                       <p className="text-sm text-gray-600">
                         Applied to join {membership.club.name}

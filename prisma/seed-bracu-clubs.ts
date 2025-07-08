@@ -456,6 +456,7 @@ async function main() {
     {
       title: 'Annual Programming Contest 2024',
       description: 'Join us for the biggest programming contest of the year! Test your skills against the best programmers in the university.',
+      date: new Date('2025-01-20T09:00:00'),
       venue: 'UB40101 - Computer Lab',
       startDate: new Date('2025-01-20T09:00:00'),
       endDate: new Date('2025-01-20T17:00:00'),
@@ -468,6 +469,7 @@ async function main() {
     {
       title: 'Adventure Hiking Trip to Srimangal',
       description: 'Experience the beautiful tea gardens and natural trails of Srimangal with fellow adventure enthusiasts.',
+      date: new Date('2025-02-05T06:00:00'),
       venue: 'Srimangal, Sylhet',
       startDate: new Date('2025-02-05T06:00:00'),
       endDate: new Date('2025-02-07T18:00:00'),
@@ -480,6 +482,7 @@ async function main() {
     {
       title: 'Business Case Competition 2024',
       description: 'Analyze real-world business scenarios and present your solutions to industry experts.',
+      date: new Date('2025-01-25T10:00:00'),
       venue: 'Business School - Conference Room',
       startDate: new Date('2025-01-25T10:00:00'),
       endDate: new Date('2025-01-25T16:00:00'),
@@ -492,6 +495,7 @@ async function main() {
     {
       title: 'Inter-University Debate Championship',
       description: 'Compete against top debaters from universities across Bangladesh in this prestigious tournament.',
+      date: new Date('2025-02-15T10:00:00'),
       venue: 'Main Auditorium',
       startDate: new Date('2025-02-15T10:00:00'),
       endDate: new Date('2025-02-15T18:00:00'),
@@ -504,6 +508,7 @@ async function main() {
     {
       title: 'Robotics Workshop: Building Your First Robot',
       description: 'Hands-on workshop for beginners to build and program their first robot using Arduino.',
+      date: new Date('2025-01-30T14:00:00'),
       venue: 'Engineering Lab - Room 201',
       startDate: new Date('2025-01-30T14:00:00'),
       endDate: new Date('2025-01-30T18:00:00'),

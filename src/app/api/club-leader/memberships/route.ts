@@ -184,13 +184,13 @@ export async function PUT(request: NextRequest) {
           await sendEmail({
             to: membership.user.email,
             subject: `🎉 Welcome to ${membership.club.name}!`,
-            html: emailTemplates.membershipApproved(membership.user.name, membership.club.name)
+            html: emailTemplates.membershipApproved(membership.user.name || 'Member', membership.club.name)
           })
         } else {
           await sendEmail({
             to: membership.user.email,
             subject: `Update on your ${membership.club.name} application`,
-            html: emailTemplates.membershipRejected(membership.user.name, membership.club.name)
+            html: emailTemplates.membershipRejected(membership.user.name || 'Member', membership.club.name)
           })
         }
       }

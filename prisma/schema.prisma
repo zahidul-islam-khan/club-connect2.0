@@ -84,11 +84,12 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts      Account[]
-  sessions      Session[]
-  memberships   Membership[]
-  eventRsvps    EventRsvp[]
+  accounts       Account[]
+  sessions       Session[]
+  memberships    Membership[]
+  eventRsvps     EventRsvp[]
   budgetRequests BudgetRequest[]
+  leadingClubs   Club[]          @relation("ClubLeader")
 
   @@map("users")
 }
@@ -107,15 +108,22 @@ model Club {
   name        String      @unique
   description String?
   category    String?
+  department  String?
   status      ClubStatus  @default(ACTIVE)
   logoUrl     String?
   website     String?
   email       String?
   phone       String?
   advisor     String?
+  foundedYear Int?
+  vision      String?
+  mission     String?
+  activities  String?
+  leaderId    String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
+  leader         User?           @relation("ClubLeader", fields: [leaderId], references: [id])
   memberships    Membership[]
   events         Event[]
   budgetRequests BudgetRequest[]
@@ -141,17 +149,22 @@ model Membership {
 }
 
 model Event {
-  id          String      @id @default(cuid())
-  title       String
-  description String?
-  date        DateTime
-  location    String?
-  capacity    Int?
-  price       Float?
-  status      EventStatus @default(PENDING)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  clubId      String
+  id           String      @id @default(cuid())
+  title        String
+  description  String?
+  date         DateTime
+  venue        String?
+  location     String?
+  startDate    DateTime?
+  endDate      DateTime?
+  capacity     Int?
+  price        Float?
+  isPublic     Boolean?    @default(true)
+  requirements String?
+  status       EventStatus @default(PENDING)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  clubId       String
 
   club  Club        @relation(fields: [clubId], references: [id], onDelete: Cascade)
   rsvps EventRsvp[]
@@ -179,10 +192,12 @@ model BudgetRequest {
   title       String
   description String?
   amount      Float
+  purpose     String?
   status      BudgetRequestStatus @default(PENDING)
   requestedBy String
   reviewedBy  String?
   clubId      String
+  requestedAt DateTime?
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
 

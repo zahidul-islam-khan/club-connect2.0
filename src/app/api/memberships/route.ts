@@ -82,8 +82,8 @@ export async function POST(request: NextRequest) {
             to: club.leader.email,
             subject: `New Membership Application for ${club.name}`,
             html: emailTemplates.clubLeaderNotification(
-              club.leader.name,
-              user.name,
+              club.leader.name || 'Club Leader',
+              user.name || 'Member',
               user.studentId || 'N/A',
               club.name,
               user.department || 'N/A'

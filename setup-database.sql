@@ -73,12 +73,18 @@ CREATE TABLE "clubs" (
     "name" TEXT NOT NULL,
     "description" TEXT,
     "category" TEXT,
+    "department" TEXT,
     "status" "ClubStatus" NOT NULL DEFAULT 'ACTIVE',
     "logoUrl" TEXT,
     "website" TEXT,
     "email" TEXT,
     "phone" TEXT,
     "advisor" TEXT,
+    "foundedYear" INTEGER,
+    "vision" TEXT,
+    "mission" TEXT,
+    "activities" TEXT,
+    "leaderId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -105,9 +111,14 @@ CREATE TABLE "events" (
     "title" TEXT NOT NULL,
     "description" TEXT,
     "date" TIMESTAMP(3) NOT NULL,
+    "venue" TEXT,
     "location" TEXT,
+    "startDate" TIMESTAMP(3),
+    "endDate" TIMESTAMP(3),
     "capacity" INTEGER,
     "price" DOUBLE PRECISION,
+    "isPublic" BOOLEAN DEFAULT true,
+    "requirements" TEXT,
     "status" "EventStatus" NOT NULL DEFAULT 'PENDING',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -134,10 +145,12 @@ CREATE TABLE "budget_requests" (
     "title" TEXT NOT NULL,
     "description" TEXT,
     "amount" DOUBLE PRECISION NOT NULL,
+    "purpose" TEXT,
     "status" "BudgetRequestStatus" NOT NULL DEFAULT 'PENDING',
     "requestedBy" TEXT NOT NULL,
     "reviewedBy" TEXT,
     "clubId" TEXT NOT NULL,
+    "requestedAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -204,6 +217,9 @@ ALTER TABLE "event_rsvps" ADD CONSTRAINT "event_rsvps_userId_fkey" FOREIGN KEY (
 
 -- AddForeignKey
 ALTER TABLE "event_rsvps" ADD CONSTRAINT "event_rsvps_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "events"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "clubs" ADD CONSTRAINT "clubs_leaderId_fkey" FOREIGN KEY ("leaderId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "budget_requests" ADD CONSTRAINT "budget_requests_requestedBy_fkey" FOREIGN KEY ("requestedBy") REFERENCES "users"("id") ON UPDATE CASCADE;

@@ -9,9 +9,7 @@ const updateClubSchema = z.object({
   name: z.string().min(1, 'Club name is required'),
   description: z.string().transform(val => val === '' ? null : val).nullable().optional(),
   department: z.string().min(1, 'Department is required'),
-  status: z.string().refine(val => ['PENDING', 'ACTIVE', 'INACTIVE', 'SUSPENDED'].includes(val), {
-    message: 'Status must be one of: PENDING, ACTIVE, INACTIVE, SUSPENDED'
-  }).transform(val => val || 'ACTIVE'),
+  status: z.enum(['PENDING', 'ACTIVE', 'INACTIVE', 'SUSPENDED']).default('ACTIVE'),
   foundedYear: z.number().int().min(1900).max(new Date().getFullYear()).nullable().optional(),
   vision: z.string().transform(val => val === '' ? null : val).nullable().optional(),
   mission: z.string().transform(val => val === '' ? null : val).nullable().optional()
@@ -20,9 +18,9 @@ const updateClubSchema = z.object({
 // PUT - Update club
 export async function PUT(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = context.params
+  const { id } = await params
 
   try {
     const session = await getServerSession(authOptions)
@@ -117,9 +115,9 @@ export async function PUT(
 // DELETE - Delete club
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = context.params
+  const { id } = await params
 
   try {
     const session = await getServerSession(authOptions)
