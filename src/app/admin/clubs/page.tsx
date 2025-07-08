@@ -159,7 +159,7 @@ export default function AdminClubsPage() {
         console.error('Update error:', errorData)
         
         if (errorData.details && Array.isArray(errorData.details)) {
-          const validationErrors = errorData.details.map((err: any) => `${err.path?.join('.')}: ${err.message}`).join('\n')
+          const validationErrors = errorData.details.map((err: { path?: string[]; message: string }) => `${err.path?.join('.')}: ${err.message}`).join('\n')
           alert(`Validation errors:\n${validationErrors}`)
         } else {
           alert(errorData.error || 'Failed to update club')
