@@ -1,60 +1,23 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { ClubStatus } from '@prisma/client';
 
-// Full list of BRAC University clubs
+// A list of official BRAC University clubs with all required fields
 const bracuClubs = [
-    { name: "Aeronautics and Space Exploration Club (BASEC)", department: "Aerospace" },
-    { name: "Art and Photography Society (BUAPS)", department: "Arts" },
-    { name: "BRAC University Adventure Club (BUAC)", department: "Adventure" },
-    { name: "BRAC University Business and Economics Forum (BUBEF)", department: "Business & Economics" },
-    { name: "BRAC University Chess Club (BUCHC)", department: "Sports" },
-    { name: "BRAC University Communication and Language Club (BUCLC)", department: "Language & Communication" },
-    { name: "BRAC University Computer Club (BUCC)", department: "Technology" },
-    { name: "BRAC University Cultural Club (BUCuC)", department: "Cultural" },
-    { name: "BRAC University Debating Club (BUDC)", department: "Debate" },
-    { name: "BRAC University Drama and Theatre Forum (BUDTF)", department: "Performing Arts" },
-    { name: "BRAC University Entrepreneurship Development Forum (BUEDF)", department: "Entrepreneurship" },
-    { name: "BRAC University Film Club (BUFC)", department: "Film" },
-    { name: "BRAC University Finance Society (BUFS)", department: "Finance" },
-    { name: "BRAC University Global Affairs Forum (BUGAF)", department: "Global Affairs" },
-    { name: "BRAC University Heritage Forum (BUHF)", department: "Heritage" },
-    { name: "BRAC University Hoovez (Dance Club)", department: "Performing Arts" },
-    { name: "BRAC University International Association of Business Communicators (IABC)", department: "Business Communication" },
-    { name: "BRAC University Law Society (BULS)", department: "Law" },
-    { name: "BRAC University Medical Club (BUMC)", department: "Health" },
-    { name: "BRAC University Mongol Tori (Robotics Club)", department: "Technology" },
-    { name: "BRAC University Moot Court Society (BUMCS)", department: "Law" },
-    { name: "BRAC University Natural Sciences Club (BUNSC)", department: "Science" },
-    { name: "BRAC University Pharma Society (BUPS)", department: "Pharmacy" },
-    { name: "BRAC University Social Development Forum (BUSDF)", department: "Social Development" },
-    { name: "BRAC University Community Service Club (BUCSC)", department: "Community Service" },
-    { name: "BRAC University Cricket Club", department: "Sports" },
-    { name: "BRAC University Football Club", department: "Sports" },
-    { name: "BRAC University Indoor Games Club", department: "Sports" },
-    { name: "BRAC University Investment Club", department: "Finance" },
-    { name: "BRAC University Marketing Association (BUMA)", department: "Marketing" },
-    { name: "BRAC University Media and Journalism Forum", department: "Media" },
-    { name: "BRAC University Mons Pervius Club (Mountaineering)", department: "Adventure" },
-    { name: "BRAC University Music Club", department: "Music" },
-    { name: "BRAC University Reading Society", department: "Literature" },
-    { name: "BRAC University Robotics Club", department: "Technology" },
-    { name: "BRAC University Students Against Violence Everywhere (SAVE)", department: "Social Awareness" },
-    { name: "BRAC University Tourism Club", department: "Tourism" },
-    { name: "BRAC University Yoga and Wellness Club", department: "Wellness" },
-    { name: "First Aid Society of BRAC University (FASBU)", department: "Health" },
-    { name: "Her Campus at BRAC University", department: "Media" },
-    { name: "IEEE BRAC University Student Branch", department: "Engineering" },
-    { name: "Monon", department: "Mental Health" },
-    { name: "Negotiation Club of BRAC University", department: "Negotiation" },
-    { name: "Network of Women in Business (NOWB)", department: "Business" },
-    { name: "Passport (International Student Association)", department: "International Students" },
-    { name: "Platform for Law and Human Rights", department: "Law & Human Rights" },
-    { name: "RS-VIVE", department: "Social Awareness" },
-    { name: "Society for Promotion of Bangladesh Art and Culture (SPBAC)", department: "Art & Culture" },
-    { name: "Teach It", department: "Education" },
-    { name: "The Storytellers", department: "Literature" },
-    { name: "BRAC University Quantum Computing Club (BUQCC)", department: "Technology" },
-    { name: "BRAC University Ethics and Integrity Club (BUEIC)", department: "Ethics" }
+    { name: "BRAC University Art and Photography Society", category: 'Arts & Culture', department: 'All', description: 'A hub for creative minds to express themselves through various art forms and photography.', vision: 'To be a leading platform for artistic expression.', mission: 'To foster creativity and collaboration.', activities: 'Workshops, Exhibitions, Photo-walks', status: ClubStatus.ACTIVE },
+    { name: "BRAC University Film Club", category: 'Arts & Culture', department: 'All', description: 'Dedicated to the appreciation and creation of films, hosting screenings, workshops, and competitions.', vision: 'To cultivate a vibrant film culture.', mission: 'To educate and inspire filmmakers.', activities: 'Screenings, Workshops, Film Festivals', status: ClubStatus.ACTIVE },
+    { name: "BRAC University Cultural Club", category: 'Arts & Culture', department: 'All', description: 'Promotes and preserves the rich cultural heritage of Bangladesh through various events and performances.', vision: 'To be the cultural heart of the university.', mission: 'To celebrate diversity through cultural expression.', activities: 'Cultural Shows, Music Festivals, Dance Workshops', status: ClubStatus.ACTIVE },
+    { name: "BRAC University Debating Club", category: 'Public Speaking', department: 'All', description: 'A platform for students to hone their debating and public speaking skills.', vision: 'To develop world-class debaters.', mission: 'To promote critical thinking and articulate expression.', activities: 'Debate Competitions, Workshops, Public Speaking Sessions', status: ClubStatus.ACTIVE },
+    { name: "BRAC University Business and Economics Forum", category: 'Academic', department: 'BBS', description: 'Fosters discussion and learning in business, economics, and entrepreneurship.', vision: 'To bridge the gap between academia and industry.', mission: 'To empower future business leaders.', activities: 'Seminars, Case Competitions, Industry Talks', status: ClubStatus.ACTIVE },
+    { name: "AIESEC in BRAC University", category: 'Leadership', department: 'All', description: 'A global platform for young people to explore and develop their leadership potential.', vision: 'To achieve peace and fulfillment of humankind\'s potential.', mission: 'To provide leadership development opportunities.', activities: 'Internships, Volunteering, Leadership Conferences', status: ClubStatus.ACTIVE },
+    { name: "BRAC University Computer Club (BUCC)", category: 'Academic', department: 'CSE', description: 'A community for tech enthusiasts to learn, innovate, and collaborate on computing projects.', vision: 'To be a center of technological innovation.', mission: 'To foster a passion for computing.', activities: 'Hackathons, Workshops, Tech Talks', status: ClubStatus.ACTIVE },
+    { name: "BRAC University Pharma Society", category: 'Academic', department: 'Pharmacy', description: 'Engages students in pharmaceutical sciences through seminars, workshops, and industry visits.', vision: 'To advance pharmaceutical knowledge.', mission: 'To connect students with the pharma industry.', activities: 'Seminars, Pharmacy Fairs, Industry Visits', status: ClubStatus.ACTIVE },
+    { name: "BRAC University Law Society", category: 'Academic', department: 'Law', description: 'Promotes legal education and awareness through moot courts, seminars, and legal aid clinics.', vision: 'To uphold the principles of justice and law.', mission: 'To provide practical legal training.', activities: 'Moot Courts, Seminars, Legal Aid', status: ClubStatus.ACTIVE },
+    { name: "IEEE BRAC University Student Branch", category: 'Academic', department: 'EEE', description: 'A branch of the global IEEE organization, focusing on advancing technology for humanity.', vision: 'To be a leading student branch of IEEE.', mission: 'To promote technical knowledge and professional development.', activities: 'Tech Fests, Workshops, Seminars', status: ClubStatus.ACTIVE },
+    { name: "BRAC University Entrepreneurship Development Forum", category: 'Business', department: 'BBS', description: 'Inspires and supports student entrepreneurs through mentorship, workshops, and networking events.', vision: 'To create a thriving entrepreneurial ecosystem.', mission: 'To nurture the next generation of entrepreneurs.', activities: 'Business Plan Competitions, Startup Talks, Mentorship Programs', status: ClubStatus.ACTIVE },
+    { name: "BRAC University Global Affairs Forum", category: 'Social & Global', department: 'All', description: 'A forum for discussing international relations, diplomacy, and global issues.', vision: 'To foster global citizenship.', mission: 'To promote understanding of international affairs.', activities: 'Model UN, Policy Debates, Ambassador Talks', status: ClubStatus.ACTIVE },
+    { name: "BRAC University Adventure Club", category: 'Sports & Recreation', department: 'All', description: 'Organizes adventurous and recreational activities like hiking, trekking, and cycling.', vision: 'To promote a spirit of adventure.', mission: 'To explore the great outdoors.', activities: 'Hiking, Camping, Cycling Tours', status: ClubStatus.ACTIVE },
+    { name: "BRAC University Indoor Games Club", category: 'Sports & Recreation', department: 'All', description: 'Promotes indoor sports and games, organizing tournaments and practice sessions.', vision: 'To be the hub for indoor sports enthusiasts.', mission: 'To encourage sportsmanship and healthy competition.', activities: 'Chess Tournaments, Table Tennis, Carrom', status: ClubStatus.ACTIVE },
 ];
 
 export async function GET() {
@@ -62,25 +25,19 @@ export async function GET() {
     console.log("Starting database seeding process...");
 
     const firstUser = await db.user.findFirst();
-
     if (!firstUser) {
       return NextResponse.json(
         { error: "Cannot seed clubs. No users found in the database to assign as a leader. Please create a user first." },
         { status: 400 }
       );
     }
-    
     console.log(`Found user ${firstUser.email} to assign as a default club leader.`);
 
     const clubsToCreate = bracuClubs.map(club => ({
-      name: club.name,
-      description: `Official club for ${club.name}. Department: ${club.department || 'General'}.`,
-      department: club.department || 'General',
-      status: "ACTIVE", // Use string literal directly
+      ...club,
       leaderId: firstUser.id,
     }));
 
-    // Delete existing clubs to ensure a clean slate and prevent duplicates
     await db.club.deleteMany({});
     console.log("Cleared existing clubs from the database.");
 
