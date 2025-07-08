@@ -14,6 +14,7 @@
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
     "db:seed-bracu": "tsx prisma/seed-bracu-clubs.ts",
+    "db:seed-official": "tsx prisma/seed-official-clubs.ts",
     "db:seed-simple": "node prisma/seed-simple.js",
     "db:seed-sqlite": "tsx prisma/seed-sqlite.ts",
     "db:setup-production": "node setup-production-db.js",
