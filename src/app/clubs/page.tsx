@@ -150,21 +150,18 @@ export default function DiscoverClubsPage() {
 
   return (
     <div 
-      className="min-h-screen relative concert-bg"
+      className="min-h-screen relative"
       style={{
-        // Fallback gradient background that looks like a concert stage
-        background: `
-          radial-gradient(ellipse at top, rgba(139, 69, 19, 0.3) 0%, transparent 50%),
-          radial-gradient(ellipse at bottom left, rgba(75, 0, 130, 0.4) 0%, transparent 50%),
-          radial-gradient(ellipse at bottom right, rgba(255, 20, 147, 0.4) 0%, transparent 50%),
-          linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #16213e 75%, #1a1a2e 100%)
-        `,
+        backgroundImage: `url('/images/image2.jpeg')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed'
       }}
     >
-      {/* Overlay container */}
+      {/* Dark translucent overlay */}
+      <div className="absolute inset-0 bg-black/50"></div>
+      
+      {/* Content container */}
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 max-w-7xl">
         <motion.div 
           className="mb-8 text-center"
@@ -172,14 +169,14 @@ export default function DiscoverClubsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white drop-shadow-2xl mb-4">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-100 drop-shadow-2xl mb-4">
             🎵 Discover Clubs 🎵
           </h1>
-          <p className="text-gray-200 mt-2 text-lg sm:text-xl drop-shadow-lg max-w-2xl mx-auto">
+          <p className="text-white/90 mt-2 text-lg sm:text-xl drop-shadow-lg max-w-2xl mx-auto">
             Explore and join BRAC University clubs - Find your passion, amplify your voice!
           </p>
           <motion.div 
-            className="mt-4 text-yellow-300 text-sm font-medium"
+            className="mt-4 text-white/90 text-sm font-medium"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.6 }}
@@ -191,22 +188,22 @@ export default function DiscoverClubsPage() {
       {loading && (
         <div className="text-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent mx-auto mb-4"></div>
-          <p className="mt-2 text-white text-lg">🎪 Loading the amazing clubs...</p>
+          <p className="mt-2 text-white/90 text-lg">🎪 Loading the amazing clubs...</p>
         </div>
       )}
       
       {error && (
-        <div className="text-center text-red-300 py-6 bg-red-900/50 backdrop-blur rounded-lg mb-8 p-6 mx-4 sm:mx-0 border border-red-400/30">
-          <p className="font-medium text-lg">⚠️ Error loading clubs</p>
-          <p className="text-sm mt-2 text-red-200">{error}</p>
+        <div className="text-center text-red-300 py-6 bg-white/10 backdrop-blur-md rounded-lg mb-8 p-6 mx-4 sm:mx-0 border border-white/20">
+          <p className="font-medium text-lg text-white/90">⚠️ Error loading clubs</p>
+          <p className="text-sm mt-2 text-white/80">{error}</p>
         </div>
       )}
       
       {!loading && clubs.length === 0 && (
-        <div className="text-center py-12 bg-white/10 backdrop-blur rounded-lg shadow-lg border border-white/20">
-          <Building2 className="h-16 w-16 text-yellow-300 mx-auto mb-6" />
-          <p className="text-white text-lg">🎭 No clubs found. The stage is waiting to be set!</p>
-          <p className="text-gray-300 text-sm mt-2">The database might need to be seeded with club data.</p>
+        <div className="text-center py-12 bg-white/10 backdrop-blur-md rounded-lg shadow-md border border-white/20">
+          <Building2 className="h-16 w-16 text-white/90 mx-auto mb-6" />
+          <p className="text-white/90 text-lg">🎭 No clubs found. The stage is waiting to be set!</p>
+          <p className="text-white/80 text-sm mt-2">The database might need to be seeded with club data.</p>
         </div>
       )}
       
@@ -232,9 +229,9 @@ export default function DiscoverClubsPage() {
                 transition: { duration: 0.2 }
               }}
             >
-              <Card className="h-full flex flex-col hover:shadow-lg transition-all duration-300 bg-white/95 backdrop-blur border border-white/30 hover:border-yellow-300/50 relative overflow-hidden group">
+              <Card className="h-full flex flex-col hover:shadow-lg transition-all duration-300 bg-white/10 backdrop-blur-md text-white/90 rounded-lg shadow-md border border-white/20 hover:border-white/40 relative overflow-hidden group transform hover:scale-105 hover:shadow-xl hover:shadow-white/20">
                 {club.logoUrl && (
-                  <div className="aspect-video w-full overflow-hidden rounded-t-lg bg-gradient-to-br from-purple-100 to-blue-100 relative">
+                  <div className="aspect-video w-full overflow-hidden rounded-t-lg bg-gradient-to-br from-white/10 to-white/5 relative">
                     <img
                       src={club.logoUrl}
                       alt={`${club.name} logo`}
@@ -248,24 +245,24 @@ export default function DiscoverClubsPage() {
                   </div>
                 )}
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base sm:text-lg leading-tight text-gray-800 group-hover:text-purple-700 transition-colors">
+                  <CardTitle className="text-base sm:text-lg leading-tight text-slate-100 group-hover:text-white transition-colors">
                     {club.name}
                   </CardTitle>
                   <div className="flex flex-wrap gap-1.5 mt-2">
                     {club.category && (
-                      <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
+                      <Badge variant="outline" className="text-xs bg-white/20 text-white/90 border-white/30 backdrop-blur-sm">
                         🎯 {club.category}
                       </Badge>
                     )}
                     {club.department && (
-                      <Badge variant="secondary" className="text-xs bg-blue-50 text-blue-700">
+                      <Badge variant="secondary" className="text-xs bg-white/15 text-white/90 border-white/25">
                         🏛️ {club.department}
                       </Badge>
                     )}
                   </div>
                 </CardHeader>
                 <CardContent className="flex-grow flex flex-col justify-between pt-0">
-                  <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">
+                  <p className="text-white/80 text-sm leading-relaxed line-clamp-3 mb-4">
                     {club.description}
                   </p>
                   <motion.div
@@ -278,7 +275,7 @@ export default function DiscoverClubsPage() {
                         status !== "authenticated" ||
                         processingClubIds.has(club.id)
                       }
-                      className="w-full text-sm bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                      className="w-full text-sm bg-white/20 hover:bg-white/30 text-white font-semibold shadow-lg hover:shadow-xl backdrop-blur-sm border border-white/30 hover:border-white/50 transition-all duration-300"
                       size="sm"
                     >
                       {status !== "authenticated"
@@ -290,7 +287,7 @@ export default function DiscoverClubsPage() {
                   </motion.div>
                 </CardContent>
                 {/* Subtle glow effect */}
-                <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 pointer-events-none"></div>
+                <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-30 transition-opacity duration-300 bg-gradient-to-r from-white/10 via-white/5 to-white/10 pointer-events-none"></div>
               </Card>
             </motion.div>
           ))}
