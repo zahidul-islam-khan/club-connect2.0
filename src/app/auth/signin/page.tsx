@@ -52,23 +52,38 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="bracu-bg min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
-      <div className="max-w-md w-full space-y-8 relative z-10">
-        <div className="text-center">
-          <Link href="/" className="flex items-center justify-center space-x-2 mb-8">
-            <Building2 className="h-8 w-8 text-white" />
-            <span className="text-2xl font-bold text-white drop-shadow-lg">Club Connect</span>
-          </Link>
-          <h2 className="text-3xl font-bold text-white drop-shadow-lg">Sign in to your account</h2>
-          <p className="mt-2 text-sm text-gray-200 drop-shadow">
-            Don&apos;t have an account?{' '}
-            <Link href="/auth/signup" className="font-medium text-blue-300 hover:text-blue-200">
-              Sign up here
-            </Link>
-          </p>
-        </div>
+    <div 
+      className="min-h-screen relative"
+      style={{
+        backgroundImage: `url('/images/bracu-campus.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/50"></div>
+      
+      {/* Content container */}
+      <div className="relative z-10 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full">
+          {/* Frosted glass container */}
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 shadow-2xl border border-white/20">
+            <div className="text-center mb-8">
+              <Link href="/" className="flex items-center justify-center space-x-2 mb-6">
+                <Building2 className="h-8 w-8 text-white" />
+                <span className="text-2xl font-bold text-white drop-shadow-lg">Club Connect</span>
+              </Link>
+              <h2 className="text-3xl font-bold text-white drop-shadow-lg mb-2">Sign in to your account</h2>
+              <p className="text-sm text-gray-200 drop-shadow">
+                Don&apos;t have an account?{' '}
+                <Link href="/auth/signup" className="font-medium text-blue-300 hover:text-blue-200 underline">
+                  Sign up here
+                </Link>
+              </p>
+            </div>
 
-        <Card className="bg-white/90 backdrop-blur">
+            <Card className="bg-white/95 backdrop-blur border-0 shadow-lg">
           <CardHeader>
             <CardTitle>Welcome back</CardTitle>
             <CardDescription>Enter your credentials to access your account</CardDescription>
@@ -132,6 +147,8 @@ export default function SignInPage() {
             </form>
           </CardContent>
         </Card>
+          </div>
+        </div>
       </div>
     </div>
   )
