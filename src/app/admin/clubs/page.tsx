@@ -203,21 +203,36 @@ export default function AdminClubsPage() {
   }
 
   return (
-    <div className="bracu-bg min-h-screen relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
-        {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-white drop-shadow-lg">Club Management</h1>
-            <p className="mt-2 text-gray-200 drop-shadow">
-              Manage all university clubs and their status
-            </p>
-          </div>
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Add New Club
-          </Button>
-        </div>
+    <div 
+      className="min-h-screen relative"
+      style={{
+        backgroundImage: `url('/images/bracu-campus.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/50"></div>
+      
+      {/* Content container */}
+      <div className="relative z-10 min-h-screen flex flex-col py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto w-full">
+          {/* Frosted glass container */}
+          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 sm:p-8 shadow-2xl border border-white/20 transition-all duration-300 hover:bg-white/15">
+            {/* Header */}
+            <div className="mb-8 flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold text-white drop-shadow-lg">Club Management</h1>
+                <p className="mt-2 text-gray-200 drop-shadow">
+                  Manage all university clubs and their status
+                </p>
+              </div>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Add New Club
+              </Button>
+            </div>
 
         {/* Search and Stats */}
         <div className="mb-8">
@@ -503,6 +518,8 @@ export default function AdminClubsPage() {
             </div>
           </div>
         )}
+          </div>
+        </div>
       </div>
     </div>
   )

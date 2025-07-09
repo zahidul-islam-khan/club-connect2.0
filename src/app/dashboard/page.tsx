@@ -123,17 +123,32 @@ export default function Dashboard() {
 
 function AdminDashboard({ dashboardData }: { dashboardData: DashboardData }) {
   return (
-    <div className="bracu-bg min-h-screen relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 relative z-10">
-        {/* Welcome Section */}
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-lg">
-            OCA Admin Dashboard
-          </h1>
-          <p className="mt-2 text-sm sm:text-base text-gray-600">
-            Welcome back, {dashboardData.user.name} • Office of Co-Curricular Activities
-          </p>
-        </div>
+    <div 
+      className="min-h-screen relative"
+      style={{
+        backgroundImage: `url('/images/bracu-campus.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/50"></div>
+      
+      {/* Content container */}
+      <div className="relative z-10 min-h-screen flex flex-col py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto w-full">
+          {/* Frosted glass container */}
+          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 sm:p-8 shadow-2xl border border-white/20 transition-all duration-300 hover:bg-white/15">
+            {/* Welcome Section */}
+            <div className="mb-6 sm:mb-8">
+              <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-lg">
+                OCA Admin Dashboard
+              </h1>
+              <p className="mt-2 text-sm sm:text-base text-gray-200 drop-shadow">
+                Welcome back, {dashboardData.user.name} • Office of Co-Curricular Activities
+              </p>
+            </div>
 
         {/* Admin Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
@@ -255,7 +270,7 @@ function AdminDashboard({ dashboardData }: { dashboardData: DashboardData }) {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-semibold text-sm">New club application</h3>
-                    <p className="text-xs text-gray-600">Photography Club submitted registration</p>
+                    <p className="text-xs text-gray-200">Photography Club submitted registration</p>
                   </div>
                   <span className="text-xs text-gray-500">2 hours ago</span>
                 </div>
@@ -264,7 +279,7 @@ function AdminDashboard({ dashboardData }: { dashboardData: DashboardData }) {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-semibold text-sm">Event approved</h3>
-                    <p className="text-xs text-gray-600">Computer Club&apos;s Programming Contest</p>
+                    <p className="text-xs text-gray-200">Computer Club&apos;s Programming Contest</p>
                   </div>
                   <span className="text-xs text-gray-500">5 hours ago</span>
                 </div>
@@ -273,7 +288,7 @@ function AdminDashboard({ dashboardData }: { dashboardData: DashboardData }) {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-semibold text-sm">Budget request</h3>
-                    <p className="text-xs text-gray-600">Robotics Club requested ৳50,000</p>
+                    <p className="text-xs text-gray-200">Robotics Club requested ৳50,000</p>
                   </div>
                   <span className="text-xs text-gray-500">1 day ago</span>
                 </div>
@@ -281,6 +296,8 @@ function AdminDashboard({ dashboardData }: { dashboardData: DashboardData }) {
             </div>
           </CardContent>
         </Card>
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -288,14 +305,29 @@ function AdminDashboard({ dashboardData }: { dashboardData: DashboardData }) {
 
 function ClubLeaderDashboard({ dashboardData }: { dashboardData: DashboardData }) {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
+    <div 
+      className="min-h-screen relative"
+      style={{
+        backgroundImage: `url('/images/bracu-campus.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/50"></div>
+      
+      {/* Content container */}
+      <div className="relative z-10 min-h-screen flex flex-col py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto w-full">
+          {/* Frosted glass container */}
+          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 sm:p-8 shadow-2xl border border-white/20 transition-all duration-300 hover:bg-white/15">
+            {/* Welcome Section */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-white drop-shadow-lg">
             Club Leader Dashboard
           </h1>
-          <p className="mt-2 text-gray-600">
+          <p className="mt-2 text-gray-200">
             Welcome back, {dashboardData.user.name}
             {dashboardData.user.studentId && ` • Student ID: ${dashboardData.user.studentId}`}
             {dashboardData.user.department && ` • ${dashboardData.user.department}`}
@@ -380,7 +412,7 @@ function ClubLeaderDashboard({ dashboardData }: { dashboardData: DashboardData }
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="font-semibold text-sm">Sarah Ahmed</h4>
-                      <p className="text-xs text-gray-600">Wants to join Computer Programming Club</p>
+                      <p className="text-xs text-gray-200">Wants to join Computer Programming Club</p>
                       <p className="text-xs text-gray-500 mt-1">Applied 2 hours ago • Student ID: 21101234</p>
                     </div>
                     <div className="flex gap-2">
@@ -398,7 +430,7 @@ function ClubLeaderDashboard({ dashboardData }: { dashboardData: DashboardData }
                   <div className="flex items-center justify-between">
                     <div>
                       <h4 className="font-semibold text-sm">Md. Rahman</h4>
-                      <p className="text-xs text-gray-600">Wants to join Robotics Club</p>
+                      <p className="text-xs text-gray-200">Wants to join Robotics Club</p>
                       <p className="text-xs text-gray-500 mt-1">Applied 5 hours ago • Student ID: 21101567</p>
                     </div>
                     <div className="flex gap-2">
@@ -494,7 +526,7 @@ function ClubLeaderDashboard({ dashboardData }: { dashboardData: DashboardData }
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h3 className="font-semibold text-sm">{club.name}</h3>
-                        <p className="text-xs text-gray-600 mt-1">{club.description}</p>
+                        <p className="text-xs text-gray-200 mt-1">{club.description}</p>
                         <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
                           <span className="flex items-center gap-1">
                             <Users className="h-3 w-3" />
@@ -520,15 +552,17 @@ function ClubLeaderDashboard({ dashboardData }: { dashboardData: DashboardData }
               <div className="space-y-3">
                 <div className="border rounded-lg p-3">
                   <h4 className="font-semibold text-sm">Programming Workshop</h4>
-                  <p className="text-xs text-gray-600">Computer Club • Tomorrow at 2:00 PM</p>
+                  <p className="text-xs text-gray-200">Computer Club • Tomorrow at 2:00 PM</p>
                 </div>
                 <div className="border rounded-lg p-3">
                   <h4 className="font-semibold text-sm">Robot Building Session</h4>
-                  <p className="text-xs text-gray-600">Robotics Club • Friday at 10:00 AM</p>
+                  <p className="text-xs text-gray-200">Robotics Club • Friday at 10:00 AM</p>
                 </div>
               </div>
             </CardContent>
           </Card>
+        </div>
+          </div>
         </div>
       </div>
     </div>
@@ -537,14 +571,29 @@ function ClubLeaderDashboard({ dashboardData }: { dashboardData: DashboardData }
 
 function StudentDashboard({ dashboardData }: { dashboardData: DashboardData }) {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
+    <div 
+      className="min-h-screen relative"
+      style={{
+        backgroundImage: `url('/images/bracu-campus.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/50"></div>
+      
+      {/* Content container */}
+      <div className="relative z-10 min-h-screen flex flex-col py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto w-full">
+          {/* Frosted glass container */}
+          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 sm:p-8 shadow-2xl border border-white/20 transition-all duration-300 hover:bg-white/15">
+            {/* Welcome Section */}
+            <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white drop-shadow-lg">
             Welcome back, {dashboardData.user.name}!
           </h1>
-          <p className="mt-2 text-gray-600">
+          <p className="mt-2 text-gray-200">
             {dashboardData.user.studentId && `Student ID: ${dashboardData.user.studentId}`}
             {dashboardData.user.department && ` • ${dashboardData.user.department}`}
           </p>
@@ -607,7 +656,7 @@ function StudentDashboard({ dashboardData }: { dashboardData: DashboardData }) {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h3 className="font-semibold text-sm">{club.name}</h3>
-                        <p className="text-xs text-gray-600 mt-1">{club.description}</p>
+                        <p className="text-xs text-gray-200 mt-1">{club.description}</p>
                         <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
                           <span className="flex items-center gap-1">
                             <Users className="h-3 w-3" />
@@ -643,7 +692,7 @@ function StudentDashboard({ dashboardData }: { dashboardData: DashboardData }) {
                 {dashboardData.recentEvents.map((event) => (
                   <div key={event.id} className="border rounded-lg p-4">
                     <h3 className="font-semibold text-sm">{event.title}</h3>
-                    <p className="text-xs text-gray-600 mt-1">by {event.clubName}</p>
+                    <p className="text-xs text-gray-200 mt-1">by {event.clubName}</p>
                     <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
                       <span className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
@@ -691,6 +740,8 @@ function StudentDashboard({ dashboardData }: { dashboardData: DashboardData }) {
               </div>
             </CardContent>
           </Card>
+        </div>
+          </div>
         </div>
       </div>
     </div>

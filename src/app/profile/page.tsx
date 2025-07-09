@@ -237,14 +237,29 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="bracu-bg min-h-screen relative">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 max-w-4xl relative z-10">
-        <div className="text-center mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-lg">User Profile</h1>
-          <p className="text-gray-200 mt-2 drop-shadow">Your personal and account details</p>
-        </div>
-        
-        <Card className="max-w-2xl mx-auto bg-white/90 backdrop-blur">
+    <div 
+      className="min-h-screen relative"
+      style={{
+        backgroundImage: `url('/images/bracu-campus.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/50"></div>
+      
+      {/* Content container */}
+      <div className="relative z-10 min-h-screen flex flex-col py-8 px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto max-w-4xl w-full">
+          {/* Frosted glass container */}
+          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 sm:p-8 shadow-2xl border border-white/20 transition-all duration-300 hover:bg-white/15">
+            <div className="text-center mb-6 sm:mb-8">
+              <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-lg">User Profile</h1>
+              <p className="text-gray-200 mt-2 drop-shadow">Your personal and account details</p>
+            </div>
+            
+            <Card className="max-w-2xl mx-auto bg-white/95 backdrop-blur border-0 shadow-lg">
         <CardHeader className="pb-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
             <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
@@ -366,6 +381,8 @@ export default function ProfilePage() {
           )}
         </CardContent>
       </Card>
+          </div>
+        </div>
       </div>
     </div>
   )

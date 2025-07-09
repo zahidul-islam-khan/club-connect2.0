@@ -149,15 +149,30 @@ export default function EventsPage() {
   }
 
   return (
-    <div className="bracu-bg min-h-screen relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white drop-shadow-lg">Events</h1>
-          <p className="mt-2 text-gray-200 drop-shadow">
-            Discover and participate in exciting events hosted by university clubs
-          </p>
-        </div>
+    <div 
+      className="min-h-screen relative"
+      style={{
+        backgroundImage: `url('/images/bracu-campus.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/50"></div>
+      
+      {/* Content container */}
+      <div className="relative z-10 min-h-screen flex flex-col py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto w-full">
+          {/* Frosted glass container */}
+          <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 sm:p-8 shadow-2xl border border-white/20 transition-all duration-300 hover:bg-white/15">
+            {/* Header */}
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-white drop-shadow-lg">Events</h1>
+              <p className="mt-2 text-gray-200 drop-shadow">
+                Discover and participate in exciting events hosted by university clubs
+              </p>
+            </div>
 
         {/* Search and Filter */}
         <div className="mb-8 space-y-4 md:space-y-0 md:flex md:items-center md:space-x-4">
@@ -274,13 +289,15 @@ export default function EventsPage() {
 
         {filteredEvents.length === 0 && (
           <div className="text-center py-12">
-            <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No events found</h3>
-            <p className="text-gray-600">
+            <Calendar className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-white mb-2">No events found</h3>
+            <p className="text-gray-200">
               Try adjusting your search terms or filters to find events that interest you.
             </p>
           </div>
         )}
+          </div>
+        </div>
       </div>
     </div>
   )
