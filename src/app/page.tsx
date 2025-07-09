@@ -1,7 +1,16 @@
 'use client'
 
 import Link from 'next/link'
-import { useSession } from 'next-auth/react'
+import { useSession }      style={{
+        backgroundImage: `url('/images/bracu-campus.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
+        filter: 'blur(1px)'
+      }}
+    >
+      {/* Dark overlay for content readability */}
+      <div className="absolute inset-0 bg-black bg-opacity-50"></div>xt-auth/react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Users, Calendar, Shield } from 'lucide-react'
@@ -23,17 +32,7 @@ export default function HomePage() {
     }
 
     return (
-      <div 
-        className="min-h-screen flex items-center justify-center relative"
-        style={{
-          backgroundImage: `url('/images/background.jpg')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed'
-        }}
-      >
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+      <div className="bracu-bg min-h-screen flex items-center justify-center">
         <div className="container mx-auto px-4 text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -62,17 +61,7 @@ export default function HomePage() {
   }
 
   return (
-    <div 
-      className="min-h-screen flex items-center justify-center relative"
-      style={{
-        backgroundImage: `url('/images/background.jpg')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
-      }}
-    >
-      {/* Dark overlay for text readability */}
-      <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+    <div className="bracu-bg min-h-screen flex items-center justify-center">
       <div className="container mx-auto px-4 text-center relative z-10">
         <motion.div
           initial={{ opacity: 0, y: -20 }}

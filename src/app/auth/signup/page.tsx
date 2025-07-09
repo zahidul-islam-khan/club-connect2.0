@@ -88,7 +88,8 @@ export default function SignUpPage() {
     <div 
       className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative"
       style={{
-        backgroundImage: `url('/images/background.jpg')`,
+        backgroundImage: `url('/images/bracu-campus.jpg')`,
+          filter: 'blur(1px)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed'

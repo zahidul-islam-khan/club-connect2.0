@@ -174,3 +174,36 @@ body {
   pointer-events: none;
   z-index: -1;
 }
+
+/* BRACU Campus Background with Blur */
+.bracu-bg {
+  position: relative;
+  min-height: 100vh;
+}
+
+.bracu-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/images/bracu-campus.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  filter: blur(2px);
+  transform: scale(1.02);
+  z-index: -2;
+}
+
+.bracu-bg::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+}
