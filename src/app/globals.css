@@ -7,6 +7,16 @@ body {
   min-height: 100vh;
 }
 
+/* Ensure hero sections are properly centered */
+.hero-content {
+  text-align: center !important;
+}
+
+/* Override any DaisyUI text alignment issues */
+.text-center {
+  text-align: center !important;
+}
+
 :root {
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;
@@ -64,6 +74,7 @@ body {
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
