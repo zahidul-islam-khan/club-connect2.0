@@ -55,7 +55,7 @@ export default function SignInPage() {
     <div 
       className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative"
       style={{
-        backgroundImage: `url('/images/concert-background.jpg')`,
+        backgroundImage: `url('/images/background.jpg')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed'

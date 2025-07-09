@@ -80,7 +80,7 @@ export default function Dashboard() {
       <div 
         className="min-h-screen flex items-center justify-center relative"
         style={{
-          backgroundImage: `url('/images/concert-background.jpg')`,
+          backgroundImage: `url('/images/background.jpg')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed'
@@ -103,7 +103,7 @@ export default function Dashboard() {
       <div 
         className="min-h-screen flex items-center justify-center relative"
         style={{
-          backgroundImage: `url('/images/concert-background.jpg')`,
+          backgroundImage: `url('/images/background.jpg')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed'
@@ -124,7 +124,7 @@ export default function Dashboard() {
       <div 
         className="min-h-screen flex items-center justify-center relative"
         style={{
-          backgroundImage: `url('/images/concert-background.jpg')`,
+          backgroundImage: `url('/images/background.jpg')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed'
@@ -156,7 +156,7 @@ function AdminDashboard({ dashboardData }: { dashboardData: DashboardData }) {
     <div 
       className="min-h-screen relative"
       style={{
-        backgroundImage: `url('/images/concert-background.jpg')`,
+        backgroundImage: `url('/images/background.jpg')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed'
