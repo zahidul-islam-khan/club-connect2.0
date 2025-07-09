@@ -214,18 +214,7 @@ export default function ProfilePage() {
 
   if (status === 'loading') {
     return (
-      <div 
-        className="flex justify-center items-center h-screen relative"
-        style={{
-          backgroundImage: `url('/images/bracu-campus.jpg')`,
-          filter: 'blur(1px)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed'
-        }}
-      >
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+      <div className="bracu-bg flex justify-center items-center h-screen relative">
         <div className="text-white relative z-10">Loading...</div>
       </div>
     )
@@ -233,18 +222,7 @@ export default function ProfilePage() {
 
   if (status === 'unauthenticated') {
     return (
-      <div 
-        className="flex justify-center items-center h-screen relative"
-        style={{
-          backgroundImage: `url('/images/bracu-campus.jpg')`,
-          filter: 'blur(1px)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed'
-        }}
-      >
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+      <div className="bracu-bg flex justify-center items-center h-screen relative">
         <div className="text-white relative z-10">Access Denied. Please sign in.</div>
       </div>
     )
@@ -252,36 +230,14 @@ export default function ProfilePage() {
 
   if (!profile) {
     return (
-      <div 
-        className="flex justify-center items-center h-screen relative"
-        style={{
-          backgroundImage: `url('/images/bracu-campus.jpg')`,
-          filter: 'blur(1px)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed'
-        }}
-      >
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+      <div className="bracu-bg flex justify-center items-center h-screen relative">
         <div className="text-white relative z-10">Loading profile...</div>
       </div>
     )
   }
 
   return (
-    <div 
-      className="min-h-screen relative"
-      style={{
-        backgroundImage: `url('/images/bracu-campus.jpg')`,
-          filter: 'blur(1px)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
-      }}
-    >
-      {/* Dark overlay for content readability */}
-      <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+    <div className="bracu-bg min-h-screen relative">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 max-w-4xl relative z-10">
         <div className="text-center mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-lg">User Profile</h1>

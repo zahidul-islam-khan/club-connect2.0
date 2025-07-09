@@ -52,18 +52,7 @@ export default function SignInPage() {
   }
 
   return (
-    <div 
-      className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative"
-      style={{
-        backgroundImage: `url('/images/bracu-campus.jpg')`,
-          filter: 'blur(1px)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
-      }}
-    >
-      {/* Dark overlay for content readability */}
-      <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+    <div className="bracu-bg min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
       <div className="max-w-md w-full space-y-8 relative z-10">
         <div className="text-center">
           <Link href="/" className="flex items-center justify-center space-x-2 mb-8">

@@ -1,16 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useSession }      style={{
-        backgroundImage: `url('/images/bracu-campus.jpg')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-        filter: 'blur(1px)'
-      }}
-    >
-      {/* Dark overlay for content readability */}
-      <div className="absolute inset-0 bg-black bg-opacity-50"></div>xt-auth/react'
+import { useSession } from 'next-auth/react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Users, Calendar, Shield } from 'lucide-react'

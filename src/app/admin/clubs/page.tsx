@@ -190,14 +190,7 @@ export default function AdminClubsPage() {
         {/* Background with blur */}
         <div 
           className="absolute inset-0"
-          style={{
-            backgroundImage: `url('/images/bracu-campus.jpg')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundAttachment: 'fixed',
-            filter: 'blur(2px)',
-            transform: 'scale(1.1)'
-          }}
+          
         ></div>
         {/* Dark overlay for text readability */}
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
@@ -210,21 +203,7 @@ export default function AdminClubsPage() {
   }
 
   return (
-    <div className="min-h-screen relative">
-      {/* Background with blur */}
-      <div 
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `url('/images/bracu-campus.jpg')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed',
-          filter: 'blur(2px)',
-          transform: 'scale(1.1)'
-        }}
-      ></div>
-      {/* Dark overlay for content readability */}
-      <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+    <div className="bracu-bg min-h-screen relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
