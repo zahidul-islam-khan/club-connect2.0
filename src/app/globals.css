@@ -113,3 +113,64 @@ body {
     justify-content: center;
   }
 }
+
+/* Concert-style background and animations */
+.concert-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.concert-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 10%, rgba(255, 100, 255, 0.1) 0%, transparent 30%),
+    radial-gradient(circle at 80% 10%, rgba(100, 255, 255, 0.1) 0%, transparent 30%),
+    radial-gradient(circle at 40% 20%, rgba(255, 255, 100, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 60% 20%, rgba(255, 150, 100, 0.05) 0%, transparent 40%);
+  animation: stageLights 4s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes stageLights {
+  0% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0.4;
+    transform: scale(0.95);
+  }
+}
+
+/* Enhance club cards with subtle glow */
+.concert-bg .hover\:shadow-lg:hover {
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1), 
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 0 20px rgba(139, 69, 19, 0.1);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+/* Stage spotlight effect on hover */
+.concert-bg .hover\:shadow-lg:hover::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  right: -50%;
+  bottom: -50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: -1;
+}
