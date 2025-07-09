@@ -225,29 +225,29 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="container mx-auto p-4 md:p-8">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">User Profile</h1>
-        <p className="text-gray-600">Your personal and account details.</p>
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 max-w-4xl">
+      <div className="text-center mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">User Profile</h1>
+        <p className="text-gray-600 mt-2">Your personal and account details</p>
       </div>
       
       <Card className="max-w-2xl mx-auto">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Avatar className="h-20 w-20">
+        <CardHeader className="pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+            <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
+              <Avatar className="h-16 w-16 sm:h-20 sm:w-20 mx-auto sm:mx-0">
                 <AvatarImage 
                   src={selectedFile ? URL.createObjectURL(selectedFile) : (profile.image || undefined)} 
                   alt={profile.name || 'User'} 
                 />
                 <AvatarFallback>
-                  <User className="h-8 w-8" />
+                  <User className="h-6 w-6 sm:h-8 sm:w-8" />
                 </AvatarFallback>
               </Avatar>
-              <div>
-                <CardTitle className="text-2xl">{profile.name}</CardTitle>
-                <p className="text-gray-500">{profile.email}</p>
-                <Badge className="mt-2">{profile.role}</Badge>
+              <div className="text-center sm:text-left">
+                <CardTitle className="text-xl sm:text-2xl">{profile.name}</CardTitle>
+                <p className="text-gray-500 text-sm sm:text-base">{profile.email}</p>
+                <Badge className="mt-2 text-xs">{profile.role}</Badge>
               </div>
             </div>
             
@@ -256,6 +256,7 @@ export default function ProfilePage() {
                 onClick={() => setIsEditing(true)}
                 variant="outline"
                 size="sm"
+                className="w-full sm:w-auto"
               >
                 <Edit className="h-4 w-4 mr-2" />
                 Edit Profile

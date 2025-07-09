@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Building2 } from "lucide-react";
 import type { Club } from "@prisma/client";
 
 // Add a type for the club with membership status
@@ -147,33 +148,69 @@ export default function DiscoverClubsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Discover Clubs</h1>
-      {loading && <div className="text-center py-4">Loading clubs...</div>}
-      {error && <div className="text-center text-red-500 py-4 bg-red-50 rounded-md mb-4 p-3">{error}</div>}
-      {!loading && clubs.length === 0 && (
-        <p>
-          No clubs found. This might be because the database hasn't been seeded
-          yet.
-        </p>
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 max-w-7xl">
+      <div className="mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Discover Clubs</h1>
+        <p className="text-gray-600 mt-2">Explore and join BRAC University clubs</p>
+      </div>
+      
+      {loading && (
+        <div className="text-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Loading clubs...</p>
+        </div>
       )}
+      
+      {error && (
+        <div className="text-center text-red-500 py-4 bg-red-50 rounded-md mb-6 p-4 mx-4 sm:mx-0">
+          <p className="font-medium">Error loading clubs</p>
+          <p className="text-sm mt-1">{error}</p>
+        </div>
+      )}
+      
+      {!loading && clubs.length === 0 && (
+        <div className="text-center py-8 bg-white rounded-lg shadow-sm">
+          <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600">No clubs found. The database might need to be seeded.</p>
+        </div>
+      )}
+      
       {clubs.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {clubs.map((club) => (
-            <Card key={club.id} className="h-full flex flex-col">
-              <CardHeader>
-                <CardTitle>{club.name}</CardTitle>
-                <div className="flex flex-wrap gap-2 mt-2">
+            <Card key={club.id} className="h-full flex flex-col hover:shadow-lg transition-shadow">
+              {club.logoUrl && (
+                <div className="aspect-video w-full overflow-hidden rounded-t-lg bg-gray-100">
+                  <img
+                    src={club.logoUrl}
+                    alt={`${club.name} logo`}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base sm:text-lg leading-tight">
+                  {club.name}
+                </CardTitle>
+                <div className="flex flex-wrap gap-1.5 mt-2">
                   {club.category && (
-                    <Badge variant="outline">{club.category}</Badge>
+                    <Badge variant="outline" className="text-xs">
+                      {club.category}
+                    </Badge>
                   )}
                   {club.department && (
-                    <Badge variant="secondary">{club.department}</Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      {club.department}
+                    </Badge>
                   )}
                 </div>
               </CardHeader>
-              <CardContent className="flex-grow flex flex-col justify-between">
-                <p className="text-gray-600 mb-4 h-24 overflow-y-auto">
+              <CardContent className="flex-grow flex flex-col justify-between pt-0">
+                <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">
                   {club.description}
                 </p>
                 <Button
@@ -182,7 +219,8 @@ export default function DiscoverClubsPage() {
                     status !== "authenticated" ||
                     processingClubIds.has(club.id)
                   }
-                  className="mt-4"
+                  className="w-full text-sm"
+                  size="sm"
                 >
                   {status !== "authenticated"
                     ? "Sign in to Join"
