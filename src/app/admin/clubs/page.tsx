@@ -186,23 +186,43 @@ export default function AdminClubsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading clubs...</p>
+      <div 
+        className="min-h-screen flex items-center justify-center relative"
+        style={{
+          backgroundImage: `url('/images/concert-background.jpg')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+        <div className="text-center relative z-10">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-white mx-auto"></div>
+          <p className="mt-4 text-white text-lg">Loading clubs...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div 
+      className="min-h-screen relative"
+      style={{
+        backgroundImage: `url('/images/concert-background.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      {/* Dark overlay for content readability */}
+      <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Club Management</h1>
-            <p className="mt-2 text-gray-600">
+            <h1 className="text-3xl font-bold text-white drop-shadow-lg">Club Management</h1>
+            <p className="mt-2 text-gray-200 drop-shadow">
               Manage all university clubs and their status
             </p>
           </div>
@@ -225,7 +245,7 @@ export default function AdminClubsPage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
-            <Card>
+            <Card className="bg-white/90 backdrop-blur">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -237,7 +257,7 @@ export default function AdminClubsPage() {
               </CardContent>
             </Card>
             
-            <Card>
+            <Card className="bg-white/90 backdrop-blur">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -251,7 +271,7 @@ export default function AdminClubsPage() {
               </CardContent>
             </Card>
             
-            <Card>
+            <Card className="bg-white/90 backdrop-blur">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -265,7 +285,7 @@ export default function AdminClubsPage() {
               </CardContent>
             </Card>
             
-            <Card>
+            <Card className="bg-white/90 backdrop-blur">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -282,7 +302,7 @@ export default function AdminClubsPage() {
         </div>
 
         {/* Clubs Table */}
-        <Card>
+        <Card className="bg-white/90 backdrop-blur">
           <CardHeader>
             <CardTitle>All Clubs</CardTitle>
             <CardDescription>
@@ -292,7 +312,7 @@ export default function AdminClubsPage() {
           <CardContent>
             <div className="space-y-4">
               {filteredClubs.map((club) => (
-                <div key={club.id} className="border rounded-lg p-6">
+                <div key={club.id} className="border rounded-lg p-6 bg-white/80 backdrop-blur">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
@@ -352,7 +372,7 @@ export default function AdminClubsPage() {
         </Card>
 
         {filteredClubs.length === 0 && (
-          <div className="text-center py-12">
+          <div className="text-center py-12 bg-white/90 backdrop-blur rounded-lg">
             <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No clubs found</h3>
             <p className="text-gray-600">

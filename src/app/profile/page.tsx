@@ -213,25 +213,78 @@ export default function ProfilePage() {
   }
 
   if (status === 'loading') {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>
+    return (
+      <div 
+        className="flex justify-center items-center h-screen relative"
+        style={{
+          backgroundImage: `url('/images/concert-background.jpg')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+        <div className="text-white relative z-10">Loading...</div>
+      </div>
+    )
   }
 
   if (status === 'unauthenticated') {
-    return <div className="flex justify-center items-center h-screen">Access Denied. Please sign in.</div>
+    return (
+      <div 
+        className="flex justify-center items-center h-screen relative"
+        style={{
+          backgroundImage: `url('/images/concert-background.jpg')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+        <div className="text-white relative z-10">Access Denied. Please sign in.</div>
+      </div>
+    )
   }
 
   if (!profile) {
-    return <div className="flex justify-center items-center h-screen">Loading profile...</div>
+    return (
+      <div 
+        className="flex justify-center items-center h-screen relative"
+        style={{
+          backgroundImage: `url('/images/concert-background.jpg')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+        <div className="text-white relative z-10">Loading profile...</div>
+      </div>
+    )
   }
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 max-w-4xl">
-      <div className="text-center mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">User Profile</h1>
-        <p className="text-gray-600 mt-2">Your personal and account details</p>
-      </div>
-      
-      <Card className="max-w-2xl mx-auto">
+    <div 
+      className="min-h-screen relative"
+      style={{
+        backgroundImage: `url('/images/concert-background.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      {/* Dark overlay for content readability */}
+      <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 max-w-4xl relative z-10">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-lg">User Profile</h1>
+          <p className="text-gray-200 mt-2 drop-shadow">Your personal and account details</p>
+        </div>
+        
+        <Card className="max-w-2xl mx-auto bg-white/90 backdrop-blur">
         <CardHeader className="pb-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
             <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">

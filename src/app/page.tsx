@@ -23,18 +23,28 @@ export default function HomePage() {
     }
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 flex items-center justify-center">
-        <div className="container mx-auto px-4 text-center">
+      <div 
+        className="min-h-screen flex items-center justify-center relative"
+        style={{
+          backgroundImage: `url('/images/concert-background.jpg')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+        <div className="container mx-auto px-4 text-center relative z-10">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="max-w-md mx-auto"
           >
-            <h1 className="text-5xl font-bold mb-4 text-center">
+            <h1 className="text-5xl font-bold mb-4 text-center text-white drop-shadow-lg">
               Welcome back, {session.user.name || 'User'}!
             </h1>
-            <p className="py-6 text-lg text-gray-600 text-center">
+            <p className="py-6 text-lg text-gray-200 text-center drop-shadow">
               Ready to explore Club Connect and manage your university clubs?
             </p>
             <div className="flex justify-center">
@@ -52,16 +62,26 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-indigo-100 to-purple-100 flex items-center justify-center">
-      <div className="container mx-auto px-4 text-center">
+    <div 
+      className="min-h-screen flex items-center justify-center relative"
+      style={{
+        backgroundImage: `url('/images/concert-background.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      {/* Dark overlay for text readability */}
+      <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+      <div className="container mx-auto px-4 text-center relative z-10">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="max-w-4xl mx-auto"
         >
-          <h1 className="text-5xl font-bold mb-6 text-center">Welcome to Club Connect</h1>
-          <p className="py-6 text-lg text-gray-600 max-w-2xl mx-auto text-center">
+          <h1 className="text-5xl font-bold mb-6 text-center text-white drop-shadow-lg">Welcome to Club Connect</h1>
+          <p className="py-6 text-lg text-gray-200 max-w-2xl mx-auto text-center drop-shadow">
             The comprehensive club management system for BRAC University. 
             Join clubs, manage events, and build your university community with ease!
           </p>
@@ -87,7 +107,7 @@ export default function HomePage() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 max-w-4xl mx-auto"
           >
-            <div className="card bg-white shadow-xl">
+            <div className="card bg-white/90 backdrop-blur shadow-xl">
               <div className="card-body items-center text-center p-6">
                 <Users className="h-12 w-12 text-blue-600 mb-4" />
                 <h2 className="text-xl font-bold mb-2">Join Clubs</h2>
@@ -95,7 +115,7 @@ export default function HomePage() {
               </div>
             </div>
             
-            <div className="card bg-white shadow-xl">
+            <div className="card bg-white/90 backdrop-blur shadow-xl">
               <div className="card-body items-center text-center p-6">
                 <Calendar className="h-12 w-12 text-purple-600 mb-4" />
                 <h2 className="text-xl font-bold mb-2">Manage Events</h2>
@@ -103,7 +123,7 @@ export default function HomePage() {
               </div>
             </div>
             
-            <div className="card bg-white shadow-xl">
+            <div className="card bg-white/90 backdrop-blur shadow-xl">
               <div className="card-body items-center text-center p-6">
                 <Shield className="h-12 w-12 text-orange-600 mb-4" />
                 <h2 className="text-xl font-bold mb-2">Admin Control</h2>

@@ -85,23 +85,33 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div 
+      className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative"
+      style={{
+        backgroundImage: `url('/images/concert-background.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      {/* Dark overlay for content readability */}
+      <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+      <div className="max-w-md w-full space-y-8 relative z-10">
         <div className="text-center">
           <Link href="/" className="flex items-center justify-center space-x-2 mb-8">
-            <Building2 className="h-8 w-8 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-900">Club Connect</span>
+            <Building2 className="h-8 w-8 text-white" />
+            <span className="text-2xl font-bold text-white drop-shadow-lg">Club Connect</span>
           </Link>
-          <h2 className="text-3xl font-bold text-gray-900">Create your account</h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <h2 className="text-3xl font-bold text-white drop-shadow-lg">Create your account</h2>
+          <p className="mt-2 text-sm text-gray-200 drop-shadow">
             Already have an account?{' '}
-            <Link href="/auth/signin" className="font-medium text-blue-600 hover:text-blue-500">
+            <Link href="/auth/signin" className="font-medium text-blue-300 hover:text-blue-200">
               Sign in here
             </Link>
           </p>
         </div>
 
-        <Card>
+        <Card className="bg-white/90 backdrop-blur">
           <CardHeader>
             <CardTitle>Join Club Connect</CardTitle>
             <CardDescription>Fill in your details to create your student account</CardDescription>
