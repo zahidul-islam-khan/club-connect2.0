@@ -170,7 +170,7 @@ export default function DiscoverClubsPage() {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-100 drop-shadow-2xl mb-4">
-            🎵 Discover Clubs 🎵
+             Discover Clubs 
           </h1>
           <p className="text-white/90 mt-2 text-lg sm:text-xl drop-shadow-lg max-w-2xl mx-auto">
             Explore and join BRAC University clubs - Find your passion, amplify your voice!
@@ -181,7 +181,7 @@ export default function DiscoverClubsPage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.6 }}
           >
-            ✨ {clubs.length} Amazing Clubs Waiting for You ✨
+             {clubs.length} Amazing Clubs Waiting for You 
           </motion.div>
         </motion.div>
       
