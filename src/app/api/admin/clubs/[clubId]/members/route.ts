@@ -4,14 +4,18 @@ import { authOptions } from '@/lib/auth';
 import { db } from '@/lib/db';
 
 // GET /api/admin/clubs/[clubId]/members
-export async function GET(req: Request, context: { params: { clubId: string } }) {
+export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== 'ADMIN') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  // Await params as per Next.js 14+ API route requirements
-  const { clubId } = context.params;
+  // Extract clubId from the URL path
+  const url = new URL(req.url);
+  const segments = url.pathname.split('/');
+  // Find the clubId segment (should be just before 'members')
+  const clubIdIndex = segments.findIndex(seg => seg === 'members') - 1;
+  const clubId = segments[clubIdIndex];
   if (!clubId) {
     return NextResponse.json({ error: 'Missing clubId' }, { status: 400 });
   }
