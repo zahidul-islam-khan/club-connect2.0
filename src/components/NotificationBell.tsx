@@ -24,8 +24,8 @@ export default function NotificationBell() {
   const [pendingCount, setPendingCount] = useState(0)
 
   useEffect(() => {
-    // Fetch notifications for club leaders
-    if (session?.user?.role === 'CLUB_LEADER') {
+    // Fetch notifications for all logged-in users
+    if (session?.user) {
       fetchNotifications()
       // Refresh notifications every 30 seconds
       const interval = setInterval(fetchNotifications, 30000)
@@ -97,8 +97,8 @@ export default function NotificationBell() {
     return `${Math.floor(diffInSeconds / 86400)}d ago`
   }
 
-  // Only show for club leaders
-  if (session?.user?.role !== 'CLUB_LEADER') {
+  // Only show for logged-in users
+  if (!session?.user) {
     return null
   }
 
@@ -215,7 +215,8 @@ export default function NotificationBell() {
             )}
           </div>
 
-          {notifications.length > 0 && (
+          {/* Show extra link for club leaders */}
+          {notifications.length > 0 && session.user.role === 'CLUB_LEADER' && (
             <div className="p-3 border-t border-gray-200 bg-gray-50">
               <Link href="/club-leader/memberships">
                 <Button 

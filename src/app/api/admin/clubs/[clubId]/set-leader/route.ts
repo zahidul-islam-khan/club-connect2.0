@@ -1,0 +1,38 @@
+import { NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { z } from 'zod';
+import type { UserRole } from '@/types';
+
+const SetLeaderSchema = z.object({
+  leaderId: z.string(),
+});
+
+export async function POST(req: Request, context: { params: { clubId: string } }) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user.role !== 'ADMIN') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+  }
+  const { clubId } = context.params;
+  const body = await req.json();
+  const parse = SetLeaderSchema.safeParse(body);
+  if (!parse.success) {
+    return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
+  }
+  const { leaderId } = parse.data;
+
+  // Update club leader
+  const club = await db.club.update({
+    where: { id: clubId },
+    data: { leaderId },
+  });
+
+  // Update user role to CLUB_LEADER if not already
+  await db.user.update({
+    where: { id: leaderId },
+    data: { role: 'CLUB_LEADER' as UserRole },
+  });
+
+  return NextResponse.json({ success: true, club });
+}

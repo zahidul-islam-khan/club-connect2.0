@@ -14,27 +14,14 @@ export const metadata: Metadata = {
   description: "Centralized club management system for BRAC University",
 };
 
-export function generateViewport() {
-  return {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-  }
-}
-
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-      </head>
-      <body
-        className={`${inter.variable} font-sans antialiased min-h-screen`}
-      >
+      <body className={`${inter.variable} font-sans antialiased min-h-screen`}>
         <Providers>
           <Navigation />
           <main className="pb-4">

@@ -70,14 +70,16 @@ export async function GET(request: Request) {
             email: true,
             studentId: true,
             department: true,
-            phone: true
+            phone: true,
+            role: true
           }
         },
         club: {
           select: {
             id: true,
             name: true,
-            description: true
+            description: true,
+            leaderId: true
           }
         }
       },
@@ -156,9 +158,9 @@ export async function PATCH(request: Request) {
     }
 
     // Validate action
-    if (!['approve', 'reject', 'remove'].includes(action)) {
+    if (!['approve', 'reject', 'remove', 'setLeader'].includes(action)) {
       return NextResponse.json(
-        { error: 'Invalid action. Must be approve, reject, or remove' },
+        { error: 'Invalid action. Must be approve, reject, remove, or setLeader' },
         { status: 400 }
       )
     }
@@ -184,65 +186,132 @@ export async function PATCH(request: Request) {
 
     let updatedMembership
 
-    if (action === 'remove') {
-      // Delete the membership
-      await db.membership.delete({
-        where: { id: membershipId }
-      })
+    if (action === 'setLeader') {
+      const { userId, clubId } = body
       
-      return NextResponse.json({
-        message: 'Membership removed successfully'
+      if (!userId || !clubId) {
+        return NextResponse.json(
+          { error: 'User ID and Club ID are required for setLeader action' },
+          { status: 400 }
+        )
+      }
+
+      // Verify the membership is accepted
+      if (membership.status !== 'ACCEPTED') {
+        return NextResponse.json(
+          { error: 'Only accepted members can be set as leaders' },
+          { status: 400 }
+        )
+      }
+
+      // Check if the club already has a leader
+      const currentClub = await db.club.findUnique({
+        where: { id: clubId },
+        include: { leader: true }
       })
-    } else {
-      // Update membership status
-      const newStatus = action === 'approve' ? 'ACCEPTED' : 'REJECTED'
-      
+
+      if (currentClub?.leaderId && currentClub.leaderId !== userId) {
+        // Remove the previous leader's role
+        await db.user.update({
+          where: { id: currentClub.leaderId },
+          data: { role: 'STUDENT' }
+        })
+
+        // Update the previous leader's membership role
+        await db.membership.updateMany({
+          where: {
+            userId: currentClub.leaderId,
+            clubId: clubId,
+            role: 'Leader'
+          },
+          data: { role: 'Member' }
+        })
+
+        console.log('Previous leader removed:', currentClub.leaderId)
+      }
+
+      // Update the user's role to CLUB_LEADER
+      await db.user.update({
+        where: { id: userId },
+        data: { role: 'CLUB_LEADER' }
+      })
+
+      // Update the club's leader
+      await db.club.update({
+        where: { id: clubId },
+        data: { leaderId: userId }
+      })
+
+      // Update the membership role to Leader
       updatedMembership = await db.membership.update({
         where: { id: membershipId },
-        data: {
-          status: newStatus,
-          updatedAt: new Date()
-        },
+        data: { role: 'Leader' },
         include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              studentId: true,
-              department: true
-            }
-          },
-          club: {
-            select: {
-              id: true,
-              name: true
-            }
-          }
+          user: true,
+          club: true
         }
       })
 
-      // Create notification
+      // Create notification for the new leader
       await db.notification.create({
         data: {
-          type: 'MEMBERSHIP_UPDATE',
-          title: `Membership ${action === 'approve' ? 'Approved' : 'Rejected'}`,
-          message: `Your membership application to ${membership.club.name} has been ${action === 'approve' ? 'approved' : 'rejected'} by admin.`,
-          recipients: membership.userId, // Store the single user ID
+          title: 'You are now a Club Leader!',
+          message: `Congratulations! You have been appointed as the leader of ${membership.club.name}. You now have access to club management features.`,
+          type: 'SYSTEM',
+          recipients: userId
+        }
+      })
+
+      console.log('User set as leader successfully:', { userId, clubId })
+    } else {
+      // Handle existing actions (approve, reject, remove)
+      let updateData: any = {}
+
+      switch (action) {
+        case 'approve':
+          updateData = { 
+            status: 'ACCEPTED',
+            joinedAt: new Date()
+          }
+          break
+        case 'reject':
+          updateData = { status: 'REJECTED' }
+          break
+        case 'remove':
+          // Delete the membership
+          await db.membership.delete({
+            where: { id: membershipId }
+          })
+          console.log('Membership removed successfully')
+          return NextResponse.json({ message: 'Membership removed successfully' })
+        default:
+          return NextResponse.json(
+            { error: 'Invalid action' },
+            { status: 400 }
+          )
+      }
+
+      updatedMembership = await db.membership.update({
+        where: { id: membershipId },
+        data: updateData,
+        include: {
+          user: true,
+          club: true
         }
       })
     }
 
+    console.log('Membership updated successfully:', updatedMembership)
+
     return NextResponse.json({
-      message: `Membership ${action}d successfully`,
+      message: `Membership ${action}ed successfully`,
       membership: updatedMembership
     })
 
   } catch (error) {
     console.error('Error updating membership:', error)
-    console.error('Error details:', JSON.stringify(error, null, 2))
     return NextResponse.json(
-      { error: 'Failed to update membership', details: error instanceof Error ? error.message : 'Unknown error' },
+      { error: 'Failed to update membership' },
       { status: 500 }
     )
   }

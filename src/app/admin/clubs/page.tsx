@@ -8,7 +8,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
-import { Building2, Users, Search, Edit, Trash2, Plus, X } from 'lucide-react'
+import { Building2, Users, Search, Edit, Trash2, Plus, X, User2 } from 'lucide-react'
+// Dummy user list for demo; replace with API fetch
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
 
 interface Club {
   id: string
@@ -26,6 +32,78 @@ interface Club {
 }
 
 export default function AdminClubsPage() {
+  // Leader modal state and handlers (moved inside component)
+  const [showLeaderModal, setShowLeaderModal] = useState<null | string>(null); // clubId
+  const [users, setUsers] = useState<User[]>([]);
+  const [selectedLeader, setSelectedLeader] = useState<string>('');
+  const [isLeaderUpdating, setIsLeaderUpdating] = useState(false);
+
+  // Fetch club members for leader selection
+  useEffect(() => {
+    if (showLeaderModal) {
+      // Fetch only accepted members of the selected club
+      fetch(`/api/admin/clubs/${showLeaderModal}/members`)
+        .then(async res => {
+          try {
+            console.log('Fetching members for clubId:', showLeaderModal, 'Status:', res.status);
+            if (!res.ok) {
+              const errorText = await res.text();
+              console.error('Fetch error:', res.status, errorText);
+              throw new Error('Failed to fetch members');
+            }
+            const data = await res.json();
+            console.log('Fetched members:', data);
+            setUsers(data.members || []);
+          } catch (err) {
+            console.error('Error in fetch:', err);
+            setUsers([]);
+          }
+        })
+        .catch(err => {
+          console.error('Network or fetch error:', err);
+          setUsers([]);
+        });
+    }
+  }, [showLeaderModal]);
+
+  const handleOpenLeaderModal = (clubId: string) => {
+    setShowLeaderModal(clubId);
+    setSelectedLeader('');
+  };
+
+  const handleCloseLeaderModal = () => {
+    setShowLeaderModal(null);
+    setSelectedLeader('');
+  };
+
+  const handleSetLeader = async () => {
+    if (!showLeaderModal || !selectedLeader) return;
+    setIsLeaderUpdating(true);
+    try {
+      const res = await fetch(`/api/admin/clubs/${showLeaderModal}/set-leader`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ leaderId: selectedLeader })
+      });
+      if (!res.ok) throw new Error('Failed to set leader');
+      // Update UI
+      setClubs(prev => prev.map(club => {
+        if (club.id === showLeaderModal) {
+          const user = users.find(u => u.id === selectedLeader);
+          return {
+            ...club,
+            leader: user ? { name: user.name, email: user.email } : club.leader
+          };
+        }
+        return club;
+      }));
+      handleCloseLeaderModal();
+    } catch (e) {
+      alert('Error setting leader');
+    } finally {
+      setIsLeaderUpdating(false);
+    }
+  };
   const { data: session, status } = useSession()
   const router = useRouter()
   const [clubs, setClubs] = useState<Club[]>([])
@@ -328,9 +406,7 @@ export default function AdminClubsPage() {
                           {club.department}
                         </Badge>
                       </div>
-                      
                       <p className="text-gray-600 mb-3">{club.description}</p>
-                      
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-gray-500">
                         <div>
                           <span className="font-medium">Leader:</span> {club.leader.name}
@@ -346,7 +422,6 @@ export default function AdminClubsPage() {
                         </div>
                       </div>
                     </div>
-                    
                     <div className="flex items-center gap-2">
                       <Button 
                         variant="outline" 
@@ -355,6 +430,14 @@ export default function AdminClubsPage() {
                       >
                         <Edit className="h-4 w-4 mr-1" />
                         Edit
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleOpenLeaderModal(club.id)}
+                      >
+                        <User2 className="h-4 w-4 mr-1" />
+                        Change Leader
                       </Button>
                       <Button 
                         variant="outline" 
@@ -369,6 +452,43 @@ export default function AdminClubsPage() {
                   </div>
                 </div>
               ))}
+              {/* Change Leader Modal (only one at a time, outside club list) */}
+              {showLeaderModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                  <div className="bg-white rounded-lg shadow-lg max-w-md w-full p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h2 className="text-lg font-semibold">Set Club Leader</h2>
+                      <Button type="button" variant="ghost" size="sm" onClick={handleCloseLeaderModal}>
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="mb-4">
+                      <label className="block mb-2 font-medium">Select a user to set as leader:</label>
+                      {users.length === 0 ? (
+                        <div className="text-gray-500 text-sm">No members found for this club.</div>
+                      ) : (
+                        <select
+                          className="w-full border rounded px-3 py-2"
+                          value={selectedLeader}
+                          onChange={e => setSelectedLeader(e.target.value)}
+                          disabled={isLeaderUpdating}
+                        >
+                          <option value="">-- Select User --</option>
+                          {users.map(user => (
+                            <option key={user.id} value={user.id}>{user.name} ({user.email})</option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
+                    <div className="flex justify-end gap-2">
+                      <Button type="button" variant="outline" onClick={handleCloseLeaderModal} disabled={isLeaderUpdating}>Cancel</Button>
+                      <Button type="button" onClick={handleSetLeader} disabled={!selectedLeader || isLeaderUpdating}>
+                        {isLeaderUpdating ? 'Saving...' : 'Set Leader'}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

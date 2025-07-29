@@ -11,7 +11,12 @@ async function main() {
     const hashedAdminPassword = await bcrypt.hash('admin123', 12);
     const admin = await prisma.user.upsert({
       where: { email: 'admin@bracu.ac.bd' },
-      update: {},
+      update: {
+        password: hashedAdminPassword,
+        name: 'System Administrator',
+        role: 'ADMIN',
+        department: 'Office of Co-Curricular Activities',
+      },
       create: {
         name: 'System Administrator',
         email: 'admin@bracu.ac.bd',
@@ -26,7 +31,15 @@ async function main() {
     const hashedLeaderPassword = await bcrypt.hash('leader123', 12);
     const clubLeader = await prisma.user.upsert({
       where: { email: 'leader@bracu.ac.bd' },
-      update: {},
+      update: {
+        password: hashedLeaderPassword,
+        name: 'Club Leader',
+        role: 'CLUB_LEADER',
+        studentId: '21101001',
+        department: 'Computer Science',
+        semester: 'Fall 2024',
+        phone: '+880 1234 567890',
+      },
       create: {
         name: 'Club Leader',
         email: 'leader@bracu.ac.bd',
@@ -44,7 +57,15 @@ async function main() {
     const hashedStudentPassword = await bcrypt.hash('student123', 12);
     const student = await prisma.user.upsert({
       where: { email: 'student@bracu.ac.bd' },
-      update: {},
+      update: {
+        password: hashedStudentPassword,
+        name: 'Demo Student',
+        role: 'STUDENT',
+        studentId: '21101002',
+        department: 'Computer Science',
+        semester: 'Fall 2024',
+        phone: '+880 1234 567891',
+      },
       create: {
         name: 'Demo Student',
         email: 'student@bracu.ac.bd',

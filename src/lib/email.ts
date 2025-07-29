@@ -1,5 +1,27 @@
 import { Resend } from 'resend'
 
+// Send notification email to multiple users
+export const sendNotificationEmail = async (
+  to: string[],
+  subject: string,
+  message: string
+) => {
+  if (!to || to.length === 0) return;
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h1 style="color: #2563eb;">${subject}</h1>
+      <p>${message}</p>
+      <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
+      <p style="font-size: 14px; color: #6b7280; margin: 0;">
+        Best regards,<br>
+        <strong>Club Connect Team</strong><br>
+        BRAC University
+      </p>
+    </div>
+  `;
+  return sendEmail({ to, subject, html });
+};
+
 // Initialize Resend with API key if available
 let resend: Resend | null = null
 if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== 'your-resend-api-key') {

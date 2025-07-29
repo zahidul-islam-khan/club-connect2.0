@@ -224,6 +224,15 @@ function AdminDashboard({ dashboardData }: { dashboardData: DashboardData }) {
                     Membership Oversight
                   </Button>
                 </Link>
+                <Card className="bg-white/[0.00168] backdrop-blur-md border border-black border-[1px]">
+                  <CardContent className="p-0">
+                    <Link href="/admin/notifications">
+                      <Button variant="ghost" className="w-full justify-start text-black font-normal py-4">
+                        Notify Students
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
               </div>
             </CardContent>
           </Card>

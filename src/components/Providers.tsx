@@ -2,7 +2,6 @@
 
 import { SessionProvider } from 'next-auth/react'
 import { Toaster } from 'react-hot-toast'
-import { AnimatePresence } from 'framer-motion'
 
 interface ProvidersProps {
   children: React.ReactNode
@@ -11,9 +10,7 @@ interface ProvidersProps {
 export default function Providers({ children }: ProvidersProps) {
   return (
     <SessionProvider>
-      <AnimatePresence mode="wait">
-        {children}
-      </AnimatePresence>
+      {children}
       <Toaster 
         position="top-right"
         toastOptions={{

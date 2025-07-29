@@ -33,8 +33,23 @@ export async function GET(request: NextRequest) {
 
     let notifications: NotificationItem[] = []
 
+    // Admin notifications (for all users)
+    const adminNotifications = await db.notification.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 10
+    })
+    notifications = adminNotifications.map((n: any) => ({
+      id: n.id,
+      type: 'general' as const,
+      title: n.title,
+      message: n.message,
+      createdAt: n.createdAt?.toISOString() || new Date().toISOString(),
+      read: false,
+      metadata: {}
+    }))
+
+    // Club leader notifications (pending memberships)
     if (user.role === 'CLUB_LEADER') {
-      // Get clubs where user is a leader
       const leaderClubs = await db.membership.findMany({
         where: {
           userId: session.user.id,
@@ -43,11 +58,8 @@ export async function GET(request: NextRequest) {
         },
         select: { clubId: true }
       })
-
       const clubIds = leaderClubs.map((m: any) => m.clubId)
-
       if (clubIds.length > 0) {
-        // Get pending memberships for leader's clubs
         const pendingMemberships = await db.membership.findMany({
           where: {
             clubId: { in: clubIds },
@@ -62,29 +74,29 @@ export async function GET(request: NextRequest) {
             }
           },
           orderBy: { createdAt: 'desc' },
-          take: 10 // Latest 10 notifications
+          take: 10
         })
-
-        notifications = pendingMemberships.map((membership: any) => ({
-          id: membership.id,
-          type: 'membership_application' as const,
-          title: 'New Membership Application',
-          message: `${membership.user.name} (${membership.user.studentId}) wants to join ${membership.club.name}`,
-          href: '/club-leader/memberships',
-          createdAt: membership.createdAt?.toISOString() || new Date().toISOString(),
-          read: false,
-          metadata: {
-            userId: membership.userId,
-            clubId: membership.clubId,
-            studentName: membership.user.name,
-            clubName: membership.club.name
-          }
-        }))
+        notifications = [
+          ...pendingMemberships.map((membership: any) => ({
+            id: membership.id,
+            type: 'membership_application' as const,
+            title: 'New Membership Application',
+            message: `${membership.user.name} (${membership.user.studentId}) wants to join ${membership.club.name}`,
+            href: '/club-leader/memberships',
+            createdAt: membership.createdAt?.toISOString() || new Date().toISOString(),
+            read: false,
+            metadata: {
+              userId: membership.userId,
+              clubId: membership.clubId,
+              studentName: membership.user.name,
+              clubName: membership.club.name
+            }
+          })),
+          ...notifications
+        ]
       }
     }
 
-    // You can add other notification types here for students and admins
-    
     return NextResponse.json({
       notifications,
       unreadCount: notifications.filter((n: NotificationItem) => !n.read).length
