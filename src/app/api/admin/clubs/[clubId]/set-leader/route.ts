@@ -9,12 +9,19 @@ const SetLeaderSchema = z.object({
   leaderId: z.string(),
 });
 
-export async function POST(req: Request, context: { params: { clubId: string } }) {
+export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session || session.user.role !== 'ADMIN') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
   }
-  const { clubId } = context.params;
+  // Extract clubId from the URL path
+  const url = new URL(req.url);
+  const segments = url.pathname.split('/');
+  const clubIdIndex = segments.findIndex(seg => seg === 'set-leader') - 1;
+  const clubId = segments[clubIdIndex];
+  if (!clubId) {
+    return NextResponse.json({ error: 'Missing clubId' }, { status: 400 });
+  }
   const body = await req.json();
   const parse = SetLeaderSchema.safeParse(body);
   if (!parse.success) {
